@@ -1,0 +1,19 @@
+{
+  "name": "mcp",
+  "version": "0.1.0",
+  "description": "Model Context Protocol implementation",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["mcp", "model-context-protocol"],
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "^22.15.18",
+    "axios": "^1.9.0"
+  }
+}

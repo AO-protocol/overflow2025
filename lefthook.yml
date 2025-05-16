@@ -1,0 +1,46 @@
+# Lefthook configuration for overflow2025
+# https://lefthook.dev/configuration/
+
+pre-commit:
+  parallel: true
+  commands:
+    format:
+      glob: "*.{js,ts,tsx,json,md}"
+      run: pnpm biome check --write {staged_files}
+    lint:
+      glob: "*.{js,ts,tsx}"
+      run: pnpm biome lint {staged_files}
+    typecheck:
+      glob: "pkgs/mcp/**/*.{ts,tsx},pkgs/walrus/**/*.{ts,tsx}"
+      run: cd pkgs/mcp && pnpm tsc --noEmit && cd ../../pkgs/walrus && pnpm tsc --noEmit
+
+pre-push:
+  parallel: true
+  commands:
+    format:
+      glob: "*.{js,ts,tsx,json,md}"
+      run: pnpm biome check --write {push_files}
+    lint:
+      glob: "*.{js,ts,tsx}"
+      run: pnpm biome lint {push_files}
+    typecheck:
+      glob: "pkgs/mcp/**/*.{ts,tsx},pkgs/walrus/**/*.{ts,tsx}"
+      run: cd pkgs/mcp && pnpm tsc --noEmit && cd ../../pkgs/walrus && pnpm tsc --noEmit
+#
+#     - name: rubocop
+#       glob: "*.rb"
+#       exclude:
+#         - config/application.rb
+#         - config/routes.rb
+#       run: bundle exec rubocop --force-exclusion {all_files}
+#
+#     - name: govet
+#       files: git ls-files -m
+#       glob: "*.go"
+#       run: go vet {files}
+#
+#     - script: "hello.js"
+#       runner: node
+#
+#     - script: "hello.go"
+#       runner: go run

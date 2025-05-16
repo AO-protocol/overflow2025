@@ -1,0 +1,19 @@
+{
+  "timeout": 60000,
+  "retries": 5,
+  "verbose": true,
+  "targets": {
+    "default": {
+      "url": "https://example.com/api",
+      "maxRequestsPerSecond": 10
+    },
+    "production": {
+      "url": "https://api.production.com",
+      "maxRequestsPerSecond": 5
+    },
+    "development": {
+      "url": "http://localhost:3000",
+      "maxRequestsPerSecond": 50
+    }
+  }
+}

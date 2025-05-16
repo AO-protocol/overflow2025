@@ -1,0 +1,21 @@
+{
+  "name": "walrus",
+  "version": "0.1.0",
+  "description": "Walrus verification scripts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "verify": "node dist/verify.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["walrus", "verification"],
+  "type": "module",
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^22.15.18",
+    "fs-extra": "^11.3.0"
+  }
+}
