@@ -1,71 +1,47 @@
-/**
- * Model Context Protocol implementation
- * Main entry point
- */
-import axios, { type AxiosInstance } from "axios";
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import axios from "axios";
+import { config } from "dotenv";
+import { Hex } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
+import { withPaymentInterceptor } from "x402-axios";
 
-export interface MCPOptions {
-  apiKey?: string;
-  baseUrl?: string;
+// Load environment variables and throw an error if any are missing
+config();
+
+const privateKey = process.env.PRIVATE_KEY as Hex;
+const baseURL = process.env.RESOURCE_SERVER_URL as string; // e.g. https://example.com
+const endpointPath = process.env.ENDPOINT_PATH as string; // e.g. /weather
+
+if (!privateKey || !baseURL || !endpointPath) {
+  throw new Error("Missing environment variables");
 }
 
-export interface MCPResponse {
-  success: boolean;
-  data?: unknown;
-  error?: string;
-}
+// Create a wallet client to handle payments
+const account = privateKeyToAccount(privateKey);
 
-export class MCPClient {
-  private apiKey: string | undefined;
-  private baseUrl: string;
-  private client: AxiosInstance;
+// Create an axios client with payment interceptor using x402-axios
+const client = withPaymentInterceptor(axios.create({ baseURL }), account);
 
-  constructor(options: MCPOptions = {}) {
-    this.apiKey = options.apiKey;
-    this.baseUrl = options.baseUrl || "https://api.example.com/mcp";
+// Create an MCP server
+const server = new McpServer({
+  name: "x402 & walrus MCP Client",
+  version: "1.0.0",
+});
 
-    this.client = axios.create({
-      baseURL: this.baseUrl,
-      headers: {
-        "Content-Type": "application/json",
-        ...(this.apiKey ? { Authorization: `Bearer ${this.apiKey}` } : {}),
-      },
-    });
-  }
 
-  async connect(): Promise<boolean> {
-    try {
-      const response = await this.client.get("/status");
-      return response.status === 200;
-    } catch (error) {
-      console.error("Failed to connect to MCP server:", error);
-      return false;
-    }
-  }
+// Add an addition tool
+server.tool(
+  "get-data-from-resource-server",
+  "Get data from the resource server (in this example, the weather) & upload file or download via walrus", //change this description to change when the client calls the tool
+  {},
+  async () => {
+    const res = await client.get(endpointPath);
+    return {
+      content: [{ type: "text", text: JSON.stringify(res.data) }],
+    };
+  },
+);
 
-  async disconnect(): Promise<void> {
-    // Implement disconnection logic if needed
-    console.log("Disconnecting from MCP server");
-  }
-
-  async sendRequest(
-    endpoint: string,
-    data: Record<string, unknown>
-  ): Promise<MCPResponse> {
-    try {
-      const response = await this.client.post(endpoint, data);
-      return {
-        success: true,
-        data: response.data,
-      };
-    } catch (error) {
-      console.error(`MCP request to ${endpoint} failed:`, error);
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
-      };
-    }
-  }
-}
-
-export default MCPClient;
+const transport = new StdioServerTransport();
+await server.connect(transport);

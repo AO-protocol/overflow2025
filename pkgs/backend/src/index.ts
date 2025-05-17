@@ -30,7 +30,7 @@ app.use(
         price: "$0.001",
         network,
       },
-      "/download/:blobId": {
+      "/download/*": {
         price: "$0.01",
         network,
       },
@@ -90,7 +90,7 @@ app.post("/upload", async (c) => {
       {
         error: error instanceof Error ? error.message : "Failed to upload file",
       },
-      500
+      500,
     );
   }
 });
@@ -117,7 +117,7 @@ app.get("/download/:blobId", async (c) => {
     c.header("Content-Type", result.contentType);
     c.header(
       "Content-Disposition",
-      `attachment; filename="${blobId}${getExtensionFromContentType(result.contentType)}"`
+      `attachment; filename="${blobId}${getExtensionFromContentType(result.contentType)}"`,
     );
     // Read file and send it
     const fileContent = fs.readFileSync(tempFilePath);
@@ -138,7 +138,7 @@ app.get("/download/:blobId", async (c) => {
         error:
           error instanceof Error ? error.message : "Failed to download file",
       },
-      500
+      500,
     );
   }
 });
