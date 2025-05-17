@@ -34,7 +34,7 @@ A hackathon project using a monorepo structure with pnpm workspaces.
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/overflow2025.git
+git clone https://github.com/AO-protocol/overflow2025.git
 cd overflow2025
 
 # Install dependencies
