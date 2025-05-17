@@ -1,0 +1,16 @@
+{
+  "x402-walrus": {
+    "command": "pnpm",
+    "args": [
+      "--silent",
+      "-C",
+      "<absolute path to this repo>/examples/typescript/clients/mcp",
+      "dev"
+    ],
+    "env": {
+      "PRIVATE_KEY": "<private key of a wallet with USDC on Base Sepolia>",
+      "RESOURCE_SERVER_URL": "http://localhost:4021",
+      "ENDPOINT_PATH": "/weather"
+    }
+  }
+}

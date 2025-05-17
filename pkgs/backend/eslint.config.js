@@ -39,7 +39,10 @@ export default [
       "import/first": "error",
       "prettier/prettier": "error",
       "@typescript-eslint/member-ordering": "error",
-      "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_$" }],
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_$" },
+      ],
       "jsdoc/tag-lines": ["error", "any", { startLines: 1 }],
       "jsdoc/check-alignment": "error",
       "jsdoc/no-undefined-types": "off",

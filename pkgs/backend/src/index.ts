@@ -29,11 +29,11 @@ app.use(
     },
     {
       url: facilitatorUrl,
-    },
-  ),
+    }
+  )
 );
 
-app.get("/weather", c => {
+app.get("/weather", (c) => {
   return c.json({
     report: {
       weather: "sunny",

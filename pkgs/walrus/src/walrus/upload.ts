@@ -2,9 +2,9 @@
  * Walrusへファイルをアップロードするためのスクリプト
  */
 
-import fs from "fs";
-import path from "path";
 import fetch from "node-fetch";
+import fs from "node:fs";
+import path from "node:path";
 
 // Walrusの設定
 const AGGREGATOR = "https://aggregator.walrus-testnet.walrus.space";
