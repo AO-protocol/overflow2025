@@ -7,18 +7,21 @@ A hackathon project using a monorepo structure with pnpm workspaces.
 ```
 .
 ├── pkgs/
-│   ├── web/         # Next.js frontend
+│   ├── frontend/    # Next.js frontend application
+│   ├── backend/     # Backend service with Hono
 │   ├── mcp/         # Model Context Protocol implementation
-│   └── walrus/      # Verification scripts
+│   └── walrus/      # Verification scripts for WALRUS
 ```
 
 ## Technologies
 
 - **Package Manager**: pnpm
 - **Monorepo Structure**: pnpm workspaces
-- **Frontend**: Next.js with TypeScript
+- **Frontend**: Next.js 15 with React 19, TypeScript, and PWA support
+- **Backend**: Hono framework with TypeScript
+- **MCP**: Model Context Protocol SDK implementation
+- **Walrus**: Verification scripts for file operations
 - **Code Quality**: Biome (linting and formatting)
-- **Git Hooks**: Lefthook
 
 ## Getting Started
 
@@ -36,37 +39,109 @@ cd overflow2025
 
 # Install dependencies
 pnpm install
-
-# Setup git hooks
-pnpm lefthook
 ```
 
-### Development
+### formatter
 
 ```bash
-# Start Next.js frontend development server
-pnpm web
-
-# Build all packages
-pnpm build
-
-# Start development mode for all packages
-pnpm dev
-
-# Build MCP package
-pnpm mcp:build
-
-# Run Walrus verification
-pnpm walrus:verify
-
-# Format code
 pnpm format
-
-# Lint code
-pnpm lint
 ```
 
-## Git Hooks
+### How to work
 
-- **Pre-commit**: Automatically formats and lints staged files
-- **Pre-push**: Formats and lints all pushed files
+#### setup
+
+1. backend
+
+create `pkgs/backend/.env` file
+
+```bash
+FACILITATOR_URL=https://x402.org/facilitator
+NETWORK=base-sepolia
+ADDRESS=
+```
+
+2. mcp
+
+create `pkgs/mcp/.env` file
+
+```bash
+RESOURCE_SERVER_URL=http://localhost:4021
+ENDPOINT_PATH=/download/:blobId
+PRIVATE_KEY=
+```
+
+3. frontend
+
+create `pkgs/fronend/.env.local`
+
+```bash
+OPENAI_API_KEY=
+GOOGLE_GENERATIVE_AI_API_KEY=
+```
+
+### Start Backend Server & MCP
+
+1. start backend server
+
+```bash
+pnpm backend dev
+```
+
+2. setup MCP config & start
+
+open VS Code's `settings/json` & add mcp config
+
+```json
+{
+  "x402-walrus": {
+    "command": "pnpm",
+    "args": [
+      "--silent",
+      "-C",
+      "<absolute path to this repo>/examples/typescript/clients/mcp",
+      "dev"
+    ],
+    "env": {
+      "PRIVATE_KEY": "<private key of a wallet with USDC on Base Sepolia>",
+      "RESOURCE_SERVER_URL": "http://localhost:4021",
+      "ENDPOINT_PATH": "/weather"
+    }
+  }
+}
+```
+
+And Start MCP Server
+
+2. try to acucess via GitHub Copilot Agent Mode
+
+## Package Details
+
+### Frontend
+
+Next.js 15 application with React 19, featuring:
+
+- Progressive Web App (PWA) capabilities
+- Tailwind CSS for styling
+- Mastra AI integration
+
+### Backend
+
+Hono-based backend service with:
+
+- Node server implementation
+- x402 integration
+
+### MCP
+
+Model Context Protocol implementation with:
+
+- MCP SDK integration
+- Viem for blockchain interactions
+
+### Walrus
+
+Verification scripts for file operations:
+
+- File upload and download functionality
+- TypeScript implementation
