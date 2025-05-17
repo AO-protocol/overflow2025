@@ -1,21 +1,25 @@
 {
   "name": "walrus",
-  "version": "0.1.0",
-  "description": "Walrus verification scripts",
+  "private": true,
+  "version": "1.0.0",
+  "description": "WALRUS 検証用のサンプルリポジトリ",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "private": true,
   "scripts": {
     "build": "tsc",
-    "dev": "tsc --watch",
-    "verify": "node dist/verify.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js"
   },
-  "keywords": ["walrus", "verification"],
-  "type": "module",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "devDependencies": {
-    "@types/fs-extra": "^11.0.4",
-    "@types/node": "^22.15.18",
-    "fs-extra": "^11.3.0"
+    "@types/node": "^22.15.3",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2"
   }
 }

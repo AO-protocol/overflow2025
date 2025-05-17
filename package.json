@@ -4,22 +4,13 @@
   "description": "Hackathon project with monorepo structure",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "format": "biome format --write .",
     "lint": "biome lint .",
     "check": "biome check --apply .",
-    "lefthook": "lefthook install",
-    "dev": "pnpm --filter web run dev & pnpm --filter mcp run dev & pnpm --filter walrus run dev",
-    "build": "pnpm --filter web run build && pnpm --filter mcp run build && pnpm --filter walrus run build",
-    "web": "pnpm --filter web run dev",
-    "mcp:build": "pnpm --filter mcp run build",
-    "mcp:dev": "pnpm --filter mcp run dev",
-    "walrus:build": "pnpm --filter walrus run build",
-    "walrus:dev": "pnpm --filter walrus run dev",
-    "walrus:verify": "pnpm --filter walrus run verify",
-    "walrus:verify:prod": "pnpm --filter walrus run verify production",
-    "walrus:verify:dev": "pnpm --filter walrus run verify development",
-    "postinstall": "pnpm lefthook"
+    "frontend": "pnpm --filter frontend",
+    "mcp": "pnpm --filter mcp",
+    "backend": "pnpm --filter backend",
+    "walrus": "pnpm --filter walrus"
   },
   "keywords": [],
   "author": "",
@@ -27,7 +18,6 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@types/node": "^22.15.18",
-    "lefthook": "^1.11.13",
     "typescript": "^5.8.3"
   }
 }

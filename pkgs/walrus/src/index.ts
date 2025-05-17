@@ -1,99 +1,58 @@
-import path from "node:path";
 /**
- * Walrus verification script example
+ * WALRUSサンプルアプリケーション
+ *
+ * Walrusを使用してファイルのアップロードとダウンロードを行うサンプルスクリプトです
  */
-import fs from "fs-extra";
 
-export interface VerificationOptions {
-  target: string;
-  configPath?: string;
-  outputDir?: string;
-}
+import fs from "node:fs";
+import path from "node:path";
+import { downloadFile } from "./walrus/download.js";
+import { uploadFile } from "./walrus/upload.js";
 
-export interface VerificationResult {
-  success: boolean;
-  message: string;
-  details?: Record<string, unknown>;
-}
-
-export class WalrusVerifier {
-  private target: string;
-  private configPath: string;
-  private outputDir: string;
-
-  constructor(options: VerificationOptions) {
-    this.target = options.target || "default";
-    this.configPath = options.configPath || "./walrus-config.json";
-    this.outputDir = options.outputDir || "./verification-results";
+// サンプルファイルの作成
+const createSampleFile = () => {
+  const sampleDir = path.join(process.cwd(), "samples");
+  if (!fs.existsSync(sampleDir)) {
+    fs.mkdirSync(sampleDir, { recursive: true });
   }
 
-  async loadConfig(): Promise<Record<string, unknown>> {
-    try {
-      if (await fs.pathExists(this.configPath)) {
-        return await fs.readJSON(this.configPath);
-      }
-      console.warn(
-        `Config file ${this.configPath} not found, using default configuration.`
-      );
-      return {
-        timeout: 30000,
-        retries: 3,
-        verbose: true,
-      };
-    } catch (error) {
-      console.error(
-        `Error loading config: ${error instanceof Error ? error.message : String(error)}`
-      );
-      return {
-        timeout: 30000,
-        retries: 3,
-        verbose: true,
-      };
-    }
+  const sampleFilePath = path.join(sampleDir, "sample.txt");
+  fs.writeFileSync(
+    sampleFilePath,
+    `これはWalrusにアップロードするサンプルテキストファイルです。
+作成日時: ${new Date().toLocaleString("ja-JP")}
+Walrusは分散型ストレージです。`
+  );
+
+  return sampleFilePath;
+};
+
+const main = async () => {
+  try {
+    console.log("=== Walrusサンプルアプリケーション ===");
+
+    // サンプルファイルの作成
+    const sampleFilePath = createSampleFile();
+    console.log(`サンプルファイルを作成しました: ${sampleFilePath}`);
+
+    // ファイルのアップロード
+    console.log("\n--- ファイルのアップロード ---");
+    const uploadResult = await uploadFile(sampleFilePath, 10); // 10エポック分のストレージ期間
+    console.log("アップロード結果:", JSON.stringify(uploadResult, null, 2));
+
+    // ファイルのダウンロード
+    console.log("\n--- ファイルのダウンロード ---");
+    const blobId = uploadResult.blobId;
+    const downloadResult = await downloadFile(
+      blobId,
+      path.join(process.cwd(), "samples", "downloaded_sample.txt")
+    );
+    console.log("ダウンロード結果:", JSON.stringify(downloadResult, null, 2));
+
+    console.log("\n=== 処理が完了しました ===");
+  } catch (error) {
+    console.error("エラーが発生しました:", error);
   }
+};
 
-  async verify(): Promise<VerificationResult> {
-    console.log(`Running verification on target: ${this.target}`);
-
-    try {
-      const config = await this.loadConfig();
-
-      // Ensure output directory exists
-      await fs.ensureDir(this.outputDir);
-
-      // Example verification logic (would be more complex in real implementation)
-      const result: VerificationResult = {
-        success: true,
-        message: `Verification completed for ${this.target}`,
-        details: {
-          timestamp: new Date().toISOString(),
-          target: this.target,
-          config,
-        },
-      };
-
-      // Write results to file
-      await fs.writeJSON(
-        path.join(this.outputDir, `${this.target}-result.json`),
-        result,
-        { spaces: 2 }
-      );
-
-      return result;
-    } catch (error) {
-      console.error(
-        `Verification error: ${error instanceof Error ? error.message : String(error)}`
-      );
-      return {
-        success: false,
-        message: `Verification failed for ${this.target}`,
-        details: {
-          timestamp: new Date().toISOString(),
-          error: error instanceof Error ? error.message : String(error),
-        },
-      };
-    }
-  }
-}
-
-export default WalrusVerifier;
+main();
