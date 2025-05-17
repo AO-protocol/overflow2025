@@ -9,8 +9,7 @@
     "check": "biome check --apply .",
     "frontend": "pnpm --filter frontend",
     "mcp": "pnpm --filter mcp",
-    "backend": "pnpm --filter backend",
-    "walrus": "pnpm --filter walrus"
+    "backend": "pnpm --filter backend"
   },
   "keywords": [],
   "author": "",

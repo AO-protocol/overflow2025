@@ -105,7 +105,7 @@ open VS Code's `settings/json` & add mcp config
     "env": {
       "PRIVATE_KEY": "<private key of a wallet with USDC on Base Sepolia>",
       "RESOURCE_SERVER_URL": "http://localhost:4021",
-      "ENDPOINT_PATH": "/weather"
+      "ENDPOINT_PATH": "/download"
     }
   }
 }
@@ -114,6 +114,22 @@ open VS Code's `settings/json` & add mcp config
 And Start MCP Server
 
 2. try to acucess via GitHub Copilot Agent Mode
+
+- file upload
+
+  ```bash
+  ファイルをWalrusにアップロードしてください。
+  ファイルパス: /Users/harukikondo/git/overflow2025/pkgs/walrus/samples/sample.txt
+  保存期間: 10 エポック
+  ```
+
+- file download
+
+  ```bash
+  Walrusからファイルをダウンロードしてください。
+  BlobID: [アップロード時に取得したblobId]
+  保存先: /Users/harukikondo/git/overflow2025/pkgs/walrus/samples/downloaded_file.txt
+  ```
 
 ## Package Details
 

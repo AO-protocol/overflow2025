@@ -2,9 +2,9 @@
  * Walrusからファイルをダウンロードするためのスクリプト
  */
 
-import fs from "fs";
-import path from "path";
 import fetch from "node-fetch";
+import fs from "node:fs";
+import path from "node:path";
 
 // Walrusの設定
 const AGGREGATOR = "https://aggregator.walrus-testnet.walrus.space";
@@ -18,7 +18,7 @@ const AGGREGATOR = "https://aggregator.walrus-testnet.walrus.space";
  */
 export async function downloadFile(
   blobId: string,
-  outputPath?: string
+  outputPath?: string,
 ): Promise<any> {
   const downloadUrl = `${AGGREGATOR}/v1/blobs/${blobId}`;
 
