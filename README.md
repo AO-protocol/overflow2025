@@ -2,6 +2,8 @@
 
 A hackathon project using a monorepo structure with pnpm workspaces.
 
+## Project Overview
+
 ## Project Structure
 
 ```
@@ -127,10 +129,13 @@ And Start MCP Server
   please enter below prompt from frontend
 
   ```bash
-  ファイルパス： ~/Downloads/sample.txt
-  エポック数： 10
+  ファイルをWalrusにアップロードしてください。
+  ファイルパス:   /Users/harukikondo/Downloads/sample.txt
+  保存期間: 10 エポック.
+  この内容でお願いします！アドレスは指定しません。
+  承認済みなのでアップロード処理まで行ってください。
 
-  の条件でファイルをwalrusにアップロードしてください。送信先アドレスは指定しません。
+  catコマンドを実行してファイルが存在することは確認済みです。
   ```
 
 - file download

@@ -1,8 +1,3 @@
-/**
- * Mastraを使用したWalrusファイルアップロード、ダウンロードMCP Client実装
- */
-
-// @ts-expect-error -- マッキングします。実際にはMastraパッケージをインストールする必要があります
 import { MCPClient } from "@mastra/mcp";
 
 interface LogMessage {
@@ -30,7 +25,7 @@ export const createWalrusMCPClient = () => {
           "dev"
         ],
         env: {
-          PRIVATE_KEY: process.env.PRIVATE_KEY,
+          PRIVATE_KEY: process.env.PRIVATE_KEY as string,
           RESOURCE_SERVER_URL: "http://localhost:4021",
           ENDPOINT_PATH: "/download",
         },
