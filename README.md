@@ -119,7 +119,8 @@ And Start MCP Server
 
   ```bash
   ファイルをWalrusにアップロードしてください。
-  ファイルパス: /Users/harukikondo/git/overflow2025/pkgs/walrus/samples/sample.txt
+  ファイルパス:
+  `/Users/harukikondo/git/overflow2025/pkgs/mcp/samples/sample.txt`
   保存期間: 10 エポック
   ```
 
@@ -128,7 +129,8 @@ And Start MCP Server
   ```bash
   Walrusからファイルをダウンロードしてください。
   BlobID: [アップロード時に取得したblobId]
-  保存先: /Users/harukikondo/git/overflow2025/pkgs/walrus/samples/downloaded_file.txt
+  保存先:
+  `/Users/harukikondo/git/overflow2025/pkgs/mcp/samples/downloaded_file.txt`
   ```
 
 ## Package Details
