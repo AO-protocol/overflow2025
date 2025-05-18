@@ -27,7 +27,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "src/app/components/Weather.tsz"
+    "src/components/Weather.tsz"
   ],
   "exclude": ["node_modules"]
 }

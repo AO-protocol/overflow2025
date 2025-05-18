@@ -1,12 +1,11 @@
 "use client";
 
+import { getWeatherInfo } from "@/lib/actions";
 import { useState } from "react";
-import { getWeatherInfo } from "../actions";
 
 // Define the type for weather data
 interface WeatherData {
   text: string;
-  city: string;
 }
 
 export function Weather() {
@@ -31,7 +30,7 @@ export function Weather() {
 
   return (
     <div className="max-w-md mx-auto p-4">
-      <h2 className="text-xl font-bold mb-4">Weather Information</h2>
+      <h2 className="text-xl font-bold mb-4">x402 Walrus Agent</h2>
       <form onSubmit={handleSubmit} className="mb-4">
         <div className="flex gap-2">
           <input
@@ -45,16 +44,13 @@ export function Weather() {
             className="px-4 py-2 bg-blue-500 text-white rounded"
             disabled={loading}
           >
-            {loading ? "Loading..." : "Get Weather"}
+            {loading ? "Loading..." : "Let's go!"}
           </button>
         </div>
       </form>
 
       {weatherData && (
         <div className="bg-gray-50 p-4 rounded-lg border">
-          <h3 className="font-medium text-lg mb-2 text-black">
-            Weather for {weatherData.city}
-          </h3>
           <p className="whitespace-pre-wrap text-gray-900">
             {weatherData.text}
           </p>

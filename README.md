@@ -124,6 +124,15 @@ And Start MCP Server
   保存期間: 10 エポック
   ```
 
+  please enter below prompt from frontend
+
+  ```bash
+  ファイルパス： ~/Downloads/sample.txt
+  エポック数： 10
+
+  の条件でファイルをwalrusにアップロードしてください。送信先アドレスは指定しません。
+  ```
+
 - file download
 
   ```bash

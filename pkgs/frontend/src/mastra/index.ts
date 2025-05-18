@@ -1,15 +1,15 @@
 import { createLogger } from "@mastra/core/logger";
 import { Mastra } from "@mastra/core/mastra";
 
-import { weatherAgent } from "./agents";
+import { x402WalrusAgent } from "./agents";
 
 /**
  * Mastra用のインスタンスを作成
  */
 export const mastra = new Mastra({
-  agents: { weatherAgent },
+  agents: { x402WalrusAgent },
   logger: createLogger({
-    name: "Mastra",
+    name: "x402-walrus-Agent",
     level: "info",
   }),
 });
