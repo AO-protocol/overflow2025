@@ -142,7 +142,7 @@ And Start MCP Server
 5. Start Frontend
 
 ```bash
-pnpn frontend dev
+pnpm frontend dev
 ```
 
 ## Package Details
