@@ -2,6 +2,10 @@
 
 A hackathon project using a monorepo structure with pnpm workspaces.
 
+## Project Overview
+
+## Product Page
+
 ## Project Structure
 
 ```
@@ -9,8 +13,7 @@ A hackathon project using a monorepo structure with pnpm workspaces.
 ├── pkgs/
 │   ├── frontend/    # Next.js frontend application
 │   ├── backend/     # Backend service with Hono
-│   ├── mcp/         # Model Context Protocol implementation
-│   └── walrus/      # Verification scripts for WALRUS
+│   └── mcp/         # Model Context Protocol implementation
 ```
 
 ## Technologies
@@ -78,30 +81,33 @@ create `pkgs/fronend/.env.local`
 ```bash
 OPENAI_API_KEY=
 GOOGLE_GENERATIVE_AI_API_KEY=
+ANTHROPIC_API_KEY=
+PATH_TO_MCP=<PATT TO your repo>/overflow2025/pkgs/mcp/dist/index.js
 ```
 
 ### Start Backend Server & MCP
 
-1. start backend server
+1. start backend Server
 
 ```bash
 pnpm backend dev
 ```
 
-2. setup MCP config & start
+2. build MCP Server
+
+```bash
+pnpm mcp build
+```
+
+3. setup MCP config & start
 
 open VS Code's `settings/json` & add mcp config
 
 ```json
 {
   "x402-walrus": {
-    "command": "pnpm",
-    "args": [
-      "--silent",
-      "-C",
-      "<absolute path to this repo>/examples/typescript/clients/mcp",
-      "dev"
-    ],
+    "command": "node",
+    "args": ["<absolute path to this repo>/pkgs/mcp/dist/index.js"],
     "env": {
       "PRIVATE_KEY": "<private key of a wallet with USDC on Base Sepolia>",
       "RESOURCE_SERVER_URL": "http://localhost:4021",
@@ -113,25 +119,31 @@ open VS Code's `settings/json` & add mcp config
 
 And Start MCP Server
 
-2. try to acucess via GitHub Copilot Agent Mode
+4. try to acucess via GitHub Copilot Agent Mode
 
-- file upload
+   - file upload
 
-  ```bash
-  ファイルをWalrusにアップロードしてください。
-  ファイルパス:
-  `/Users/harukikondo/git/overflow2025/pkgs/mcp/samples/sample.txt`
-  保存期間: 10 エポック
-  ```
+     ```bash
+     ファイルをWalrusにアップロードしてください。
+     ファイルパス:
+     `/Users/harukikondo/git/overflow2025/pkgs/mcp/samples/sample.txt`
+     保存期間: 10
+     ```
 
-- file download
+   - file download
 
-  ```bash
-  Walrusからファイルをダウンロードしてください。
-  BlobID: [アップロード時に取得したblobId]
-  保存先:
-  `/Users/harukikondo/git/overflow2025/pkgs/mcp/samples/downloaded_file.txt`
-  ```
+     ```bash
+     Walrusからファイルをダウンロードしてください。
+     BlobID: [アップロード時に取得したblobId]
+     保存先:
+     `/Users/harukikondo/git/overflow2025/pkgs/mcp/samples/downloaded_file.txt`
+     ```
+
+5. Start Frontend
+
+```bash
+pnpm frontend dev
+```
 
 ## Package Details
 

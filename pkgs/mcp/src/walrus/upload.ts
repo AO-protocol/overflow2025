@@ -26,7 +26,7 @@ const SUI_VIEW_OBJECT_URL = `https://suiscan.xyz/${SUI_NETWORK}/object`;
 export async function uploadFile(
   filePath: string,
   numEpochs: number,
-  sendTo?: string,
+  sendTo?: string
 ): Promise<any> {
   console.log(`Uploading file: ${filePath}`);
   // ファイルが存在するか確認
@@ -66,7 +66,9 @@ export async function uploadFile(
     console.log("Upload successful!");
 
     // レスポンスを処理
-    const storageInfo = processUploadResponse(resultData as Record<string, unknown>);
+    const storageInfo = processUploadResponse(
+      resultData as Record<string, unknown>
+    );
     return storageInfo;
   } catch (error) {
     console.error("Error uploading file:", error);
@@ -102,25 +104,31 @@ function processUploadResponse(response: Record<string, unknown>): {
 
   let info: InfoType;
 
-  if ("alreadyCertified" in response && 
-      typeof response.alreadyCertified === 'object' && 
-      response.alreadyCertified !== null) {
+  if (
+    "alreadyCertified" in response &&
+    typeof response.alreadyCertified === "object" &&
+    response.alreadyCertified !== null
+  ) {
     const certifiedData = response.alreadyCertified as Record<string, any>;
     info = {
       status: "Already certified",
       blobId: String(certifiedData.blobId || ""),
       endEpoch: Number(certifiedData.endEpoch || 0),
       suiRefType: "Previous Sui Certified Event",
-      suiRef: String((certifiedData.event as Record<string, any>)?.txDigest || ""),
+      suiRef: String(
+        (certifiedData.event as Record<string, any>)?.txDigest || ""
+      ),
       suiBaseUrl: SUI_VIEW_TX_URL,
     };
-  } else if ("newlyCreated" in response && 
-             typeof response.newlyCreated === 'object' && 
-             response.newlyCreated !== null) {
+  } else if (
+    "newlyCreated" in response &&
+    typeof response.newlyCreated === "object" &&
+    response.newlyCreated !== null
+  ) {
     const newData = response.newlyCreated as Record<string, any>;
     const blobObject = newData.blobObject as Record<string, any>;
     const storage = blobObject.storage as Record<string, any>;
-    
+
     info = {
       status: "Newly created",
       blobId: String(blobObject.blobId || ""),
