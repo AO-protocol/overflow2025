@@ -3,11 +3,11 @@ import { fastembed } from "@mastra/fastembed";
 import { LibSQLStore } from "@mastra/libsql";
 import { Memory } from "@mastra/memory";
 import { googleGemini } from "../models";
-import { createWalrusMCPClient } from "../tools";
 
 import fs from "node:fs";
 // 基本的なメモリのセットアップ
 import path from "node:path";
+import { getwalrusMCPCTools } from "../tools";
 
 // データベースファイルのパスを絶対パスで指定
 const dbPath = path.resolve(process.cwd(), "src/mastra/db/mastra.db");
@@ -79,7 +79,7 @@ export const x402WalrusAgent = new Agent({
   `,
   // model: claude,
   model: googleGemini,
+  // @ts-expect-error this is a workaround for the type error
   memory: memory,
-  tools: tools,
-  });
-})();
+  tools: await getwalrusMCPCTools(),
+});

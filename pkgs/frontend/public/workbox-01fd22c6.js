@@ -1,4 +1,5 @@
-define(["exports"], (t) => {
+define(["exports"], function (t) {
+  "use strict";
   try {
     self["workbox:core:6.5.4"] && _();
   } catch (t) {}
@@ -301,7 +302,7 @@ define(["exports"], (t) => {
         u = await self.caches.open(c),
         l = this.hasCallback("cacheDidUpdate"),
         f = l
-          ? await (async (t, e, s, n) => {
+          ? await (async function (t, e, s, n) {
               const r = p(e.url, s);
               if (e.url === r) return t.match(e, n);
               const i = Object.assign(Object.assign({}, n), {
@@ -317,7 +318,7 @@ define(["exports"], (t) => {
         if (t instanceof Error)
           throw (
             ("QuotaExceededError" === t.name &&
-              (await (async () => {
+              (await (async function () {
                 for (const t of g) await t();
               })()),
             t)
@@ -373,7 +374,7 @@ define(["exports"], (t) => {
     }
     async doneWaiting() {
       let t;
-      while ((t = this.p.shift())) await t;
+      for (; (t = this.p.shift()); ) await t;
     }
     destroy() {
       this.l.resolve(null);
@@ -467,7 +468,7 @@ define(["exports"], (t) => {
     return (
       (q = Object.assign
         ? Object.assign.bind()
-        : (t) => {
+        : function (t) {
             for (var e = 1; e < arguments.length; e++) {
               var s = arguments[e];
               for (var n in s) ({}).hasOwnProperty.call(s, n) && (t[n] = s[n]);
@@ -526,7 +527,7 @@ define(["exports"], (t) => {
     return "function" == typeof t
       ? O(t)
       : (t instanceof IDBTransaction &&
-          ((t) => {
+          (function (t) {
             if (L.has(t)) return;
             const e = new Promise((e, s) => {
               const n = () => {
@@ -564,7 +565,7 @@ define(["exports"], (t) => {
   }
   function k(t) {
     if (t instanceof IDBRequest)
-      return ((t) => {
+      return (function (t) {
         const e = new Promise((e, s) => {
           const n = () => {
               t.removeEventListener("success", r),
@@ -642,7 +643,7 @@ define(["exports"], (t) => {
     C(t) {
       this.I(t),
         this.L &&
-          ((t, { blocked: e } = {}) => {
+          (function (t, { blocked: e } = {}) {
             const s = indexedDB.deleteDatabase(t);
             e && s.addEventListener("blocked", (t) => e(t.oldVersion, t)),
               k(s).then(() => {});
@@ -673,7 +674,7 @@ define(["exports"], (t) => {
         .openCursor(null, "prev");
       const r = [];
       let i = 0;
-      while (n) {
+      for (; n; ) {
         const s = n.value;
         s.cacheName === this.L &&
           ((t && s.timestamp < t) || (e && i >= e) ? r.push(n.value) : i++),
@@ -689,11 +690,11 @@ define(["exports"], (t) => {
     async getDb() {
       return (
         this._ ||
-          (this._ = await ((
+          (this._ = await (function (
             t,
             e,
             { blocked: s, upgrade: n, blocking: r, terminated: i } = {}
-          ) => {
+          ) {
             const a = indexedDB.open(t, e),
               o = k(a);
             return (
@@ -769,7 +770,7 @@ define(["exports"], (t) => {
       if (206 === e.status) return e;
       const n = t.headers.get("range");
       if (!n) throw new s("no-range-header");
-      const r = ((t) => {
+      const r = (function (t) {
           const e = t.trim().toLowerCase();
           if (!e.startsWith("bytes="))
             throw new s("unit-must-be-bytes", { normalizedRangeHeader: e });
@@ -784,7 +785,7 @@ define(["exports"], (t) => {
           };
         })(n),
         i = await e.blob(),
-        a = ((t, e, n) => {
+        a = (function (t, e, n) {
           const r = t.size;
           if ((n && n > r) || (e && e < 0))
             throw new s("range-not-satisfiable", { size: r, end: n, start: e });
@@ -896,7 +897,7 @@ define(["exports"], (t) => {
         statusText: r.statusText,
       },
       a = e ? e(i) : i,
-      o = (() => {
+      o = (function () {
         if (void 0 === J) {
           const t = new Response("");
           if ("body" in t)
@@ -1114,7 +1115,7 @@ define(["exports"], (t) => {
         ) {
           const i = new URL(t, location.href);
           (i.hash = ""), yield i.href;
-          const a = ((t, e = []) => {
+          const a = (function (t, e = []) {
             for (const s of [...t.searchParams.keys()])
               e.some((t) => t.test(s)) && t.searchParams.delete(s);
             return t;
@@ -1181,7 +1182,7 @@ define(["exports"], (t) => {
           (this.B = t.maxAgeSeconds),
           (this.Y = new Map()),
           t.purgeOnQuotaError &&
-            ((t) => {
+            (function (t) {
               g.add(t);
             })(() => this.deleteCacheAndMetadata());
       }
@@ -1288,7 +1289,7 @@ define(["exports"], (t) => {
         return i;
       }
     }),
-    (t.cleanupOutdatedCaches = () => {
+    (t.cleanupOutdatedCaches = function () {
       self.addEventListener("activate", (t) => {
         const e = w();
         t.waitUntil(
@@ -1302,14 +1303,14 @@ define(["exports"], (t) => {
         );
       });
     }),
-    (t.clientsClaim = () => {
+    (t.clientsClaim = function () {
       self.addEventListener("activate", () => self.clients.claim());
     }),
-    (t.precacheAndRoute = (t, e) => {
-      !((t) => {
+    (t.precacheAndRoute = function (t, e) {
+      !(function (t) {
         tt().precache(t);
       })(t),
-        ((t) => {
+        (function (t) {
           const e = tt();
           h(new et(e, t));
         })(e);

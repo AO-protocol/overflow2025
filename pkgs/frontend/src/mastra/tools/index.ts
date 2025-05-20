@@ -1,10 +1,5 @@
 import { MCPClient } from "@mastra/mcp";
 
-interface LogMessage {
-  level: string;
-  message: string;
-}
-
 /**
  * WalrusのファイルアップロードとダウンロードのMCP Clientを作成
  * @returns MCPClientインスタンス
@@ -23,13 +18,18 @@ export const createWalrusMCPClient = () => {
           RESOURCE_SERVER_URL: "http://localhost:4021",
           ENDPOINT_PATH: "/download",
         },
-        log: (logMessage: LogMessage) => {
-          console.log(`[${logMessage.level}] ${logMessage.message}`);
-        },
       },
     },
     timeout: 60000, // タイムアウト: 60秒
   });
 
   return mcpClient;
+};
+
+/**
+ * ツールだけ取得するメソッド
+ */
+export const getwalrusMCPCTools = async () => {
+  const walrusMCPClient = createWalrusMCPClient();
+  return await walrusMCPClient.getTools();
 };
