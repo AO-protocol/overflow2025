@@ -80,5 +80,6 @@ export const x402WalrusAgent = new Agent({
   // model: claude,
   model: googleGemini,
   memory: memory,
-  tools: await createWalrusMCPClient().getTools(),
-});
+  tools: tools,
+  });
+})();
