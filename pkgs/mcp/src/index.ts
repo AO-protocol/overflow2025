@@ -1,8 +1,8 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { z } from "zod";
 import { downloadFile } from "./walrus/download.js";
 import { uploadFile } from "./walrus/upload.js";
-
 
 // Create an MCP server
 const server = new McpServer({
@@ -19,7 +19,7 @@ server.tool(
     return {
       content: [{ type: "text", text: JSON.stringify("success!") }],
     };
-  },
+  }
 );
 
 // Add Walrus upload file tool
@@ -27,25 +27,11 @@ server.tool(
   "upload-file-to-walrus",
   "Upload a file to Walrus storage",
   {
-    type: "object",
-    properties: {
-      filePath: {
-        type: "string",
-        description: "Path to the file that should be uploaded",
-      },
-      numEpochs: {
-        type: "number",
-        description: "Number of epochs to store the file for",
-      },
-      sendTo: {
-        type: "string",
-        description: "Optional: Address to send the object to",
-      },
-    },
-    required: ["filePath", "numEpochs"],
+    filePath: z.string(),
+    numEpochs: z.number(),
+    sendTo: z.string().optional(),
   },
   async ({ filePath, numEpochs, sendTo }) => {
-    console.log(`[MCP upload-file-to-walrus] Received filePath: ${filePath}, type: ${typeof filePath}`);
     try {
       const result = await uploadFile(filePath, numEpochs, sendTo);
       return {
@@ -75,26 +61,16 @@ server.tool(
         ],
       };
     }
-  },
+  }
 );
 
 // Add Walrus download file tool
 server.tool(
-  "download-file-from-walrus",
-  "Download a file from Walrus storage",
+  "download-file-from-walrus-and-pay-USDC-via-x402",
+  "Download a file from Walrus storage & pay USDC via x402",
   {
-    type: "object",
-    properties: {
-      blobId: {
-        type: "string",
-        description: "ID of the blob to download",
-      },
-      outputPath: {
-        type: "string",
-        description: "Optional: Path where the downloaded file should be saved",
-      },
-    },
-    required: ["blobId"],
+    blobId: z.string(),
+    outputPath: z.string().optional(),
   },
   async ({ blobId, outputPath }) => {
     try {
@@ -127,7 +103,7 @@ server.tool(
         ],
       };
     }
-  },
+  }
 );
 
 const transport = new StdioServerTransport();

@@ -11,7 +11,7 @@ import type { Hex } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { withPaymentInterceptor } from "x402-axios";
 
-config(); 
+config();
 
 const privateKey = process.env.PRIVATE_KEY as Hex;
 const baseURL = process.env.RESOURCE_SERVER_URL as string; // e.g. https://example.com
@@ -39,7 +39,7 @@ const AGGREGATOR = "https://aggregator.walrus-testnet.walrus.space";
  */
 export async function downloadFile(
   blobId: string,
-  outputPath?: string,
+  outputPath?: string
 ): Promise<any> {
   const downloadUrl = `${AGGREGATOR}/v1/blobs/${blobId}`;
 
@@ -100,7 +100,9 @@ export async function downloadFile(
             result.metadata = JSON.parse(responseText);
             console.log("Metadata retrieved successfully");
           } catch (parseError) {
-            console.warn(`Error parsing metadata JSON: ${parseError instanceof Error ? parseError.message : String(parseError)}`);
+            console.warn(
+              `Error parsing metadata JSON: ${parseError instanceof Error ? parseError.message : String(parseError)}`
+            );
             console.log(
               "Raw metadata response:",
               responseText.substring(0, 100) + "..."
@@ -115,7 +117,9 @@ export async function downloadFile(
         );
       }
     } catch (metadataError) {
-      console.warn(`Failed to retrieve metadata: ${metadataError instanceof Error ? metadataError.message : String(metadataError)}`);
+      console.warn(
+        `Failed to retrieve metadata: ${metadataError instanceof Error ? metadataError.message : String(metadataError)}`
+      );
     }
 
     return result;

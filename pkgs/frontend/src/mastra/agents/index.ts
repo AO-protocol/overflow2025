@@ -1,16 +1,16 @@
 import { Agent } from "@mastra/core/agent";
-import { fastembed } from '@mastra/fastembed';
+import { fastembed } from "@mastra/fastembed";
 import { LibSQLStore } from "@mastra/libsql";
 import { Memory } from "@mastra/memory";
 import { googleGemini } from "../models";
 import { createWalrusMCPClient } from "../tools";
 
-import fs from 'node:fs';
+import fs from "node:fs";
 // 基本的なメモリのセットアップ
-import path from 'node:path';
+import path from "node:path";
 
 // データベースファイルのパスを絶対パスで指定
-const dbPath = path.resolve(process.cwd(), 'src/mastra/db/mastra.db');
+const dbPath = path.resolve(process.cwd(), "src/mastra/db/mastra.db");
 const dbDir = path.dirname(dbPath);
 
 // データベースディレクトリが存在することを確認
@@ -23,16 +23,18 @@ if (!fs.existsSync(dbDir)) {
 const memory = new Memory({
   embedder: fastembed,
   storage: new LibSQLStore({
-    url: `file:${dbPath}`,  
+    url: `file:${dbPath}`,
   }),
   options: {
+    lastMessages: 40,
+    semanticRecall: false,
     workingMemory: {
       enabled: true,
-      use: "tool-call", 
+      use: "tool-call",
     },
     threads: {
-      generateTitle: true
-    }
+      generateTitle: true,
+    },
   },
 });
 

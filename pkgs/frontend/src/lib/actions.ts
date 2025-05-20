@@ -7,7 +7,7 @@ export async function getWeatherInfo(city: string) {
   // call the agent with memory context
   const result = await agent.generate(`${city}`, {
     threadId: "x402-walrus-thread",
-    resourceId: "x402-walrus-resource", // リソースIDを追加
+    resourceId: "x402-walrus-resource",
   });
 
   console.log("Agent response:", result);
