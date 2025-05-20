@@ -1,6 +1,6 @@
 # Sui Overflow2025
 
-A hackathon project using a monorepo structure with pnpm workspaces.
+[![Build MCP and Frontend](https://github.com/AO-protocol/overflow2025/actions/workflows/build.yml/badge.svg)](https://github.com/AO-protocol/overflow2025/actions/workflows/build.yml)
 
 ## Project Overview
 
