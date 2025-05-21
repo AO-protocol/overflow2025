@@ -1,6 +1,7 @@
 import { serve } from "@hono/node-server";
 import { config } from "dotenv";
 import { Hono } from "hono";
+import { cors } from "hono/cors";
 import { Network, Resource, paymentMiddleware } from "x402-hono";
 // Import walrus functions from relative paths
 
@@ -18,6 +19,18 @@ if (!facilitatorUrl || !payTo || !network) {
 const app = new Hono();
 
 console.log("Server is running");
+
+// CORS
+app.use(
+  cors({
+    origin: ["*"],
+    allowHeaders: ["Content-Type", "Authorization"],
+    allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    exposeHeaders: ["Content-Length", "X-Requested-With"],
+    maxAge: 600,
+    credentials: true,
+  }),
+);
 
 app.use(
   paymentMiddleware(
