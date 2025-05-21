@@ -6,8 +6,8 @@ interface LogMessage {
 }
 
 /**
- * WalrusのファイルアップロードとダウンロードのMCP Clientを作成
- * @returns MCPClientインスタンス
+ * Create MCP Client for file upload and download for Walrus
+ * @returns MCPClient instance
  */
 export const createWalrusMCPClient = () => {
   // create MCPClient instance
@@ -29,7 +29,7 @@ export const createWalrusMCPClient = () => {
         },
       },
     },
-    timeout: 60000, // タイムアウト: 60秒
+    timeout: 60000, // Timeout: 60 seconds
   });
 
   return mcpClient;

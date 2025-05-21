@@ -1,27 +1,27 @@
 /**
- * Walrusへファイルをアップロードするためのスクリプト
+ * Script to upload files to Walrus
  */
 
 import fetch from "node-fetch";
 import fs from "node:fs";
 import path from "node:path";
 
-// Walrusの設定
+// Walrus settings
 const AGGREGATOR = "https://aggregator.walrus-testnet.walrus.space";
 const PUBLISHER = "https://publisher.walrus-01.tududes.com";
 
-// Sui関連の設定
+// Sui related settings
 const SUI_NETWORK = "testnet";
 const SUI_VIEW_TX_URL = `https://suiscan.xyz/${SUI_NETWORK}/tx`;
 const SUI_VIEW_OBJECT_URL = `https://suiscan.xyz/${SUI_NETWORK}/object`;
 
 /**
- * ファイルをWalrusにアップロードする関数
+ * Function to upload a file to Walrus
  *
- * @param filePath アップロードするファイルのパス
- * @param numEpochs ストレージの期間（エポック数）
- * @param sendTo オプション: オブジェクトの送信先アドレス
- * @returns アップロード情報
+ * @param filePath Path of the file to be uploaded
+ * @param numEpochs Storage duration (number of epochs)
+ * @param sendTo Optional: Address to send the object to
+ * @returns Upload information
  */
 export async function uploadFile(
   filePath: string,
@@ -29,7 +29,7 @@ export async function uploadFile(
   sendTo?: string
 ): Promise<any> {
   console.log(`Uploading file: ${filePath}`);
-  // ファイルが存在するか確認
+  // Check if the file exists
   if (!fs.existsSync(filePath)) {
     console.log(`File does not exist: ${filePath}`);
     throw new Error(`File does not exist: ${filePath}`);
@@ -42,14 +42,14 @@ export async function uploadFile(
   console.log(`MIME Type: ${mimeType}`);
   console.log(`Storage duration: ${numEpochs} epochs`);
 
-  // アップロードエンドポイントを構築
+  // Construct the upload endpoint
   const sendToParam = sendTo ? `&send_object_to=${sendTo}` : "";
   const uploadUrl = `${PUBLISHER}/v1/blobs?epochs=${numEpochs}${sendToParam}`;
 
   console.log(`Uploading to: ${uploadUrl}`);
 
   try {
-    // ファイルをPUTリクエストでアップロード
+    // Upload the file with a PUT request
     const response = await fetch(uploadUrl, {
       method: "PUT",
       body: fileContent,
@@ -65,7 +65,7 @@ export async function uploadFile(
     const resultData = await response.json();
     console.log("Upload successful!");
 
-    // レスポンスを処理
+    // Process the response
     const storageInfo = processUploadResponse(
       resultData as Record<string, unknown>
     );
@@ -77,9 +77,9 @@ export async function uploadFile(
 }
 
 /**
- * アップロードレスポンスを処理する関数
- * @param response Walrus APIからのレスポンス
- * @returns 処理されたアップロード情報
+ * Function to process the upload response
+ * @param response Response from the Walrus API
+ * @returns Processed upload information
  */
 function processUploadResponse(response: Record<string, unknown>): {
   status: string;
@@ -141,7 +141,7 @@ function processUploadResponse(response: Record<string, unknown>): {
     throw new Error("Unhandled successful response!");
   }
 
-  // blobのURLを追加
+  // Add the blob URL
   info.blobUrl = `${AGGREGATOR}/v1/blobs/${info.blobId}`;
   info.suiUrl = `${info.suiBaseUrl}/${info.suiRef}`;
 
@@ -149,9 +149,9 @@ function processUploadResponse(response: Record<string, unknown>): {
 }
 
 /**
- * ファイル拡張子からMIMEタイプを推測する関数
- * @param filePath ファイルパス
- * @returns MIME タイプの文字列
+ * Function to infer the MIME type from the file extension
+ * @param filePath File path
+ * @returns MIME type string
  */
 function getMimeType(filePath: string): string {
   const extension = path.extname(filePath).toLowerCase();
