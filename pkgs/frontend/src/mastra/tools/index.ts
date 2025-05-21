@@ -23,6 +23,7 @@ export const createWalrusMCPClient = () => {
           RESOURCE_SERVER_URL: "http://localhost:4021",
           ENDPOINT_PATH: "/download",
         },
+        // @ts-expect-error server is not a function
         log: (logMessage: LogMessage) => {
           console.log(`[${logMessage.level}] ${logMessage.message}`);
         },

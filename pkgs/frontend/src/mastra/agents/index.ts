@@ -79,6 +79,7 @@ export const x402WalrusAgent = new Agent({
   `,
   // model: claude,
   model: googleGemini,
+  // @ts-expect-error this is a workaround for the type error
   memory: memory,
   tools: await createWalrusMCPClient().getTools(),
 });
