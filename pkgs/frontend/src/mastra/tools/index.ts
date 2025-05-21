@@ -1,8 +1,8 @@
 import { MCPClient } from "@mastra/mcp";
 
 /**
- * WalrusのファイルアップロードとダウンロードのMCP Clientを作成
- * @returns MCPClientインスタンス
+ * Create MCP Client for file upload and download for Walrus
+ * @returns MCPClient instance
  */
 export const createWalrusMCPClient = () => {
   // create MCPClient instance
@@ -18,9 +18,13 @@ export const createWalrusMCPClient = () => {
           RESOURCE_SERVER_URL: "http://localhost:4021",
           ENDPOINT_PATH: "/download",
         },
+        // @ts-expect-error server is not a function
+        log: (logMessage: LogMessage) => {
+          console.log(`[${logMessage.level}] ${logMessage.message}`);
+        },
       },
     },
-    timeout: 60000, // タイムアウト: 60秒
+    timeout: 60000, // Timeout: 60 seconds
   });
 
   return mcpClient;

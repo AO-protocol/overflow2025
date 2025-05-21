@@ -12,7 +12,7 @@ export async function getWeatherInfo(city: string) {
 
   console.log("Agent response:", result);
 
-  // 結果を処理
+  // Process the result
   const responseText = result.text;
 
   // Return a serializable plain object

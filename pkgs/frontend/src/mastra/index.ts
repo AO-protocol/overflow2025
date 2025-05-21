@@ -4,7 +4,7 @@ import { Mastra } from "@mastra/core/mastra";
 import { x402WalrusAgent } from "./agents";
 
 /**
- * Mastra用のインスタンスを作成
+ * Create an instance for Mastra
  */
 export const mastra = new Mastra({
   agents: { x402WalrusAgent },
