@@ -70,7 +70,7 @@ create `pkgs/mcp/.env` file
 
 ```bash
 RESOURCE_SERVER_URL=http://localhost:4021
-ENDPOINT_PATH=/download/:blobId
+ENDPOINT_PATH=/download
 PRIVATE_KEY=
 ```
 

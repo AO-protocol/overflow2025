@@ -1,96 +1,96 @@
 # Backend API for Google Cloud Run
 
-このバックエンドAPIをGoogle Cloud Runにデプロイするための手順です。
+These are the steps to deploy this backend API to Google Cloud Run.
 
-## 前提条件
+## Prerequisites
 
-- [Google Cloud SDK](https://cloud.google.com/sdk/docs/install)がインストール済み
-- Google Cloudプロジェクトが作成済み
-- Dockerがインストール済み
+- [Google Cloud SDK](https://cloud.google.com/sdk/docs/install) is installed
+- Google Cloud project is created
+- Docker is installed
 
-## ローカルでの実行
+## Running locally
 
-1. 環境変数を設定
+1. Set environment variables
 
 ```bash
 cp .env.example .env
-# .envファイルを編集して適切な値を設定
+# Edit the .env file and set appropriate values
 ```
 
-2. 依存関係をインストール
+2. Install dependencies
 
 ```bash
 pnpm install
 ```
 
-3. ローカルで実行
+3. Run locally
 
 ```bash
 pnpm dev
 ```
 
-## Dockerでのビルドとローカル実行
+## Build and run locally with Docker
 
 ```bash
-# イメージのビルド
+# Build the image
 docker build -t backend-api .
 
-# ローカルでコンテナを実行
+# Run the container locally
 docker run -p 8080:8080 --env-file .env backend-api
 ```
 
-## Google Cloud Runへのデプロイ
+## Deploying to Google Cloud Run
 
-1. Google Cloud SDKで認証
+1. Authenticate with Google Cloud SDK
 
 ```bash
 gcloud auth login
 ```
 
-2. プロジェクトの設定
+2. Configure the project
 
 ```bash
 export YOUR_PROJECT_ID=YOUR_PROJECT_ID
 gcloud config set project $YOUR_PROJECT_ID
 ```
 
-3. Dockerイメージのビルドとプッシュ
+3. Build and push the Docker image
 
 ```bash
-# Artifact Registryリポジトリの作成（初回のみ）
-# backend-repo という名前のコンテナリポジトリを作成
+# Create an Artifact Registry repository (only for the first time)
+# Create a container repository named backend-repo
 gcloud artifacts repositories create backend-repo --repository-format=docker --location=asia-northeast1 --description="Docker repository"
 
-# Dockerのビルドと送信
+# Build and send Docker
 gcloud builds submit --tag asia-northeast1-docker.pkg.dev/$YOUR_PROJECT_ID/backend-repo/backend-api:latest
 ```
 
-4. Cloud Runへのデプロイ
+4. Deploy to Cloud Run
 
 ```bash
-gcloud run deploy backend-api \
-  --image asia-northeast1-docker.pkg.dev/$YOUR_PROJECT_ID/backend-repo/backend-api:latest \
-  --platform managed \
-  --region asia-northeast1 \
-  --allow-unauthenticated \
+gcloud run deploy backend-api \\
+  --image asia-northeast1-docker.pkg.dev/$YOUR_PROJECT_ID/backend-repo/backend-api:latest \\
+  --platform managed \\
+  --region asia-northeast1 \\
+  --allow-unauthenticated \\
   --set-env-vars="FACILITATOR_URL=https://x402.org/facilitator,ADDRESS=0x51908F598A5e0d8F1A3bAbFa6DF76F9704daD072,NETWORK=base-sepolia"
 ```
 
-5. Cloud Runから削除
+5. Delete from Cloud Run
 
 ```bash
 gcloud run services delete backend-api --region asia-northeast1 --project $YOUR_PROJECT_ID
 ```
 
-## 環境変数
+## Environment Variables
 
-デプロイ時に以下の環境変数を設定する必要があります：
+The following environment variables need to be set during deployment:
 
-- `FACILITATOR_URL`: ファシリテーターのURL
-- `ADDRESS`: ペイメント先のアドレス（0xで始まる）
-- `NETWORK`: ネットワーク名（例：optimism-goerli）
+- `FACILITATOR_URL`: Facilitator URL
+- `ADDRESS`: Payment destination address (starts with 0x)
+- `NETWORK`: Network name (e.g., optimism-goerli)
 
-## 注意点
+## Notes
 
-- Cloud Runではポート番号を環境変数`PORT`から取得します
-- セキュリティ上の理由から、本番環境での環境変数の設定は、.envファイルではなくCloud Run設定またはSecret Managerを使用してください
+- Cloud Run gets the port number from the environment variable `PORT`
+- For security reasons, use Cloud Run settings or Secret Manager for setting environment variables in the production environment, not the .env file
