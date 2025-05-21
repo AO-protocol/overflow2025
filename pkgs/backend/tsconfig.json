@@ -9,7 +9,8 @@
     "strict": true,
     "resolveJsonModule": true,
     "baseUrl": ".",
-    "types": ["node"]
+    "types": ["node"],
+    "outDir": "dist"
   },
-  "include": ["index.ts"]
+  "include": ["src/**/*"]
 }
