@@ -55,7 +55,12 @@ app.get("/download", async (c) => {
   });
 });
 
+// Use PORT from environment variable for Cloud Run compatibility
+const port = process.env.PORT ? Number.parseInt(process.env.PORT, 10) : 4021;
+
 serve({
   fetch: app.fetch,
-  port: 4021,
+  port,
 });
+
+console.log(`Server is running on port ${port}`);
