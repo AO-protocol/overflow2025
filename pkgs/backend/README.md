@@ -50,28 +50,36 @@ gcloud auth login
 2. プロジェクトの設定
 
 ```bash
-gcloud config set project YOUR_PROJECT_ID
+export YOUR_PROJECT_ID=YOUR_PROJECT_ID
+gcloud config set project $YOUR_PROJECT_ID
 ```
 
 3. Dockerイメージのビルドとプッシュ
 
 ```bash
 # Artifact Registryリポジトリの作成（初回のみ）
+# backend-repo という名前のコンテナリポジトリを作成
 gcloud artifacts repositories create backend-repo --repository-format=docker --location=asia-northeast1 --description="Docker repository"
 
 # Dockerのビルドと送信
-gcloud builds submit --tag asia-northeast1-docker.pkg.dev/YOUR_PROJECT_ID/backend-repo/backend-api:latest
+gcloud builds submit --tag asia-northeast1-docker.pkg.dev/$YOUR_PROJECT_ID/backend-repo/backend-api:latest
 ```
 
 4. Cloud Runへのデプロイ
 
 ```bash
 gcloud run deploy backend-api \
-  --image asia-northeast1-docker.pkg.dev/YOUR_PROJECT_ID/backend-repo/backend-api:latest \
+  --image asia-northeast1-docker.pkg.dev/$YOUR_PROJECT_ID/backend-repo/backend-api:latest \
   --platform managed \
   --region asia-northeast1 \
   --allow-unauthenticated \
-  --set-env-vars="FACILITATOR_URL=your_facilitator_url,ADDRESS=0x0000000000000000000000000000000000000000,NETWORK=optimism-goerli"
+  --set-env-vars="FACILITATOR_URL=https://x402.org/facilitator,ADDRESS=0x51908F598A5e0d8F1A3bAbFa6DF76F9704daD072,NETWORK=base-sepolia"
+```
+
+5. Cloud Runから削除
+
+```bash
+gcloud run services delete backend-api --region asia-northeast1 --project $YOUR_PROJECT_ID
 ```
 
 ## 環境変数
