@@ -3,11 +3,11 @@ import { fastembed } from "@mastra/fastembed";
 import { LibSQLStore } from "@mastra/libsql";
 import { Memory } from "@mastra/memory";
 import { googleGemini } from "../models";
-import { createWalrusMCPClient } from "../tools";
 
 import fs from "node:fs";
 // Basic memory setup
 import path from "node:path";
+import { getwalrusMCPCTools } from "../tools";
 
 // Specify the database file path as an absolute path
 const dbPath = path.resolve(process.cwd(), "src/mastra/db/mastra.db");
@@ -81,5 +81,5 @@ export const x402WalrusAgent = new Agent({
   model: googleGemini,
   // @ts-expect-error this is a workaround for the type error
   memory: memory,
-  tools: await createWalrusMCPClient().getTools(),
+  tools: await getwalrusMCPCTools(),
 });

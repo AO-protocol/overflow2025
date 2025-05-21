@@ -1,10 +1,5 @@
 import { MCPClient } from "@mastra/mcp";
 
-interface LogMessage {
-  level: string;
-  message: string;
-}
-
 /**
  * Create MCP Client for file upload and download for Walrus
  * @returns MCPClient instance
@@ -33,4 +28,12 @@ export const createWalrusMCPClient = () => {
   });
 
   return mcpClient;
+};
+
+/**
+ * ツールだけ取得するメソッド
+ */
+export const getwalrusMCPCTools = async () => {
+  const walrusMCPClient = createWalrusMCPClient();
+  return await walrusMCPClient.getTools();
 };

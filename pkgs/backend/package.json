@@ -3,7 +3,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx ./src/index.ts"
+    "dev": "tsx ./src/index.ts",
+    "build": "tsc",
+    "start": "node --experimental-modules --es-module-specifier-resolution=node ./dist/index.js",
+    "docker:build": "docker build -t backend-api .",
+    "docker:run": "docker run -p 4021:4021 --env-file .env backend-api"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.8",

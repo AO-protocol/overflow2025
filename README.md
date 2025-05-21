@@ -1,6 +1,6 @@
 # Sui Overflow2025
 
-A hackathon project using a monorepo structure with pnpm workspaces.
+[![Build MCP and Frontend](https://github.com/AO-protocol/overflow2025/actions/workflows/build.yml/badge.svg)](https://github.com/AO-protocol/overflow2025/actions/workflows/build.yml)
 
 ## Project Overview
 
@@ -126,7 +126,7 @@ And Start MCP Server
      ```bash
      ファイルをWalrusにアップロードしてください。
      ファイルパス:
-     `/Users/harukikondo/git/overflow2025/pkgs/mcp/samples/sample.txt`
+     `<absolute path to this repo>/pkgs/mcp/samples/sample.txt`
      保存期間: 10
      ```
 
@@ -136,13 +136,13 @@ And Start MCP Server
      Walrusからファイルをダウンロードしてください。
      BlobID: [アップロード時に取得したblobId]
      保存先:
-     `/Users/harukikondo/git/overflow2025/pkgs/mcp/samples/downloaded_file.txt`
+     `<absolute path to this repo>/pkgs/mcp/samples/downloaded_file.txt`
      ```
 
 5. Start Frontend
 
 ```bash
-pnpn frontend dev
+pnpm frontend dev
 ```
 
 ## Package Details
