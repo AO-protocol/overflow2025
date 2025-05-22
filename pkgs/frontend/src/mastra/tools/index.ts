@@ -31,7 +31,7 @@ export const createWalrusMCPClient = () => {
 };
 
 /**
- * ツールだけ取得するメソッド
+ * Method to get only tools
  */
 export const getwalrusMCPCTools = async () => {
   const walrusMCPClient = createWalrusMCPClient();

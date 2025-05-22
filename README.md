@@ -124,18 +124,18 @@ And Start MCP Server
    - file upload
 
      ```bash
-     ファイルをWalrusにアップロードしてください。
-     ファイルパス:
+     Upload your file to Walrus.
+     File path:
      `<absolute path to this repo>/pkgs/mcp/samples/sample.txt`
-     保存期間: 10
+     Storage period: 10
      ```
 
    - file download
 
      ```bash
-     Walrusからファイルをダウンロードしてください。
-     BlobID: [アップロード時に取得したblobId]
-     保存先:
+     Download the file from Walrus.
+     BlobID: [Retrieved at uploadblobId]
+     save location:
      `<absolute path to this repo>/pkgs/mcp/samples/downloaded_file.txt`
      ```
 

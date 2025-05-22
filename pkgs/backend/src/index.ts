@@ -29,7 +29,7 @@ app.use(
     exposeHeaders: ["Content-Length", "X-Requested-With"],
     maxAge: 600,
     credentials: true,
-  }),
+  })
 );
 
 app.use(

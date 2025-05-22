@@ -18,16 +18,16 @@ export async function POST(req: Request) {
     const mockResponse = {
       id: "mock-response",
       role: "assistant",
-      content: `これはテスト応答です。あなたのメッセージを受け取りました: "${
-        messages[messages.length - 1]?.content || "メッセージなし"
+      content: `This is a test response. We have received your message.: "${
+        messages[messages.length - 1]?.content || "No message"
       }"
 
-製品のおすすめ:
-1. ワイヤレスヘッドフォン - ¥12,000
-2. ノートパソコン - ¥85,000
-3. コーヒーメーカー - ¥15,000
+Product Recommendations: 1.
+1. wireless headphones - ¥12,000
+2. laptop computer - ¥85,000
+3. coffee maker - ¥15,000
 
-何かお手伝いできることがあれば、お知らせください。`,
+If you can help in any way, please let us know.`,
     };
 
     return NextResponse.json({ messages: [...messages, mockResponse] });

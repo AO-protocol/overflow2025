@@ -112,7 +112,7 @@ export default function Page() {
       setError(
         err instanceof Error
           ? err.message
-          : "メッセージの送信中にエラーが発生しました"
+          : "An error occurred while sending the message"
       );
     } finally {
       setIsLoading(false);
@@ -168,7 +168,7 @@ export default function Page() {
             <div className="flex flex-col gap-4 p-4 md:p-6 pb-20">
               {messages.length === 0 ? (
                 <div className="flex h-[60vh] flex-col items-center justify-center gap-3 text-center">
-                  {/* ハートアイコンを削除 */}
+
                   <h2 className="text-2xl font-medium tracking-tight text-[#4872cc]">
                     Welcome to AO
                   </h2>
@@ -219,7 +219,7 @@ export default function Page() {
                 <div className="p-4 rounded-md bg-red-50 text-red-500 text-sm flex items-start gap-2">
                   <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="font-medium">エラーが発生しました</p>
+                    <p className="font-medium">An error has occurred.</p>
                     <p>{error}</p>
                   </div>
                 </div>
@@ -230,7 +230,7 @@ export default function Page() {
                 <div className="flex items-center justify-center p-4">
                   <div className="flex items-center gap-2 text-[#4872cc]">
                     <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    <span>応答を生成中...</span>
+                    <span>Generating response...</span>
                   </div>
                 </div>
               )}

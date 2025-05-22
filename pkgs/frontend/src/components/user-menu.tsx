@@ -46,11 +46,11 @@ export function UserMenu() {
 
       // Show alert with instructions (in a real app, this would trigger the wallet connection)
       alert(
-        "実際の実装では、ここでウォレット選択モーダルが表示されます。\n\nv0環境の制限により、実際のウォレット接続はシミュレーションのみとなります。\n\n実際のアプリでは、@mysten/dapp-kitのConnectButtonまたはuseWalletフックを使用して接続します。"
+        "Here you will see the wallet selection modal\n\nv0環境の制限により、実際のウォレット接続はシミュレーションのみとなります。\n\n実際のアプリでは、@mysten/dapp-kitのConnectButtonまたはuseWalletフックを使用して接続します。"
       );
 
       // For demo purposes, you could redirect to Sui wallet website
-      if (confirm("Sui Walletのウェブサイトを開きますか？")) {
+      if (confirm("Open Sui Wallet website?")) {
         window.open("https://sui.io/wallet", "_blank");
       }
     }, 1500);
