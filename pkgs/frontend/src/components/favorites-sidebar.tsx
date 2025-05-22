@@ -32,7 +32,7 @@ export function FavoritesSidebar({
     >
       <div className="flex items-center justify-between p-4 border-b">
         <h2 className="font-medium flex items-center gap-2">
-          <Heart className="h-4 w-4 text-[#4872cc]" /> お気に入り
+          <Heart className="h-4 w-4 text-[#4872cc]" /> Favorite
         </h2>
         <Button
           variant="ghost"
@@ -50,10 +50,10 @@ export function FavoritesSidebar({
           <div className="flex flex-col items-center justify-center h-40 text-center p-4">
             <Heart className="h-8 w-8 text-muted-foreground/50 mb-2" />
             <p className="text-sm text-muted-foreground">
-              まだお気に入りがありません
+              No favorites yet.
             </p>
             <p className="text-xs text-muted-foreground/70 mt-1">
-              メッセージのハートアイコンをクリックして保存
+              Click on the heart icon in the message to save it.
             </p>
           </div>
         ) : (

@@ -57,11 +57,11 @@ export function WalletConnect() {
 
       // Show alert with instructions (in a real app, this would trigger the wallet connection)
       alert(
-        "実際の実装では、ここでウォレット選択モーダルが表示されます。\n\nv0環境の制限により、実際のウォレット接続はシミュレーションのみとなります。\n\n実際のアプリでは、@mysten/dapp-kitのConnectButtonまたはuseWalletフックを使用して接続します。"
+        "Wallet selection modal appears"
       );
 
       // For demo purposes, you could redirect to Sui wallet website
-      if (confirm("Sui Walletのウェブサイトを開きますか？")) {
+      if (confirm("Open Sui Wallet website?")) {
         window.open("https://sui.io/wallet", "_blank");
       }
     }, 1500);
@@ -72,10 +72,10 @@ export function WalletConnect() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-xl">
           <Wallet className="h-5 w-5 text-[#4872cc]" />
-          Sui ウォレット
+          Sui Wallet
         </CardTitle>
         <CardDescription>
-          Sui ウォレットに接続して、すべての機能にアクセスしましょう
+          Connect to your Sui Wallet to access all features!
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -83,7 +83,7 @@ export function WalletConnect() {
           <>
             <div className="p-3 bg-muted/50 rounded-lg">
               <div className="text-sm text-muted-foreground mb-1">
-                ウォレットアドレス
+                Wallet Address
               </div>
               <div className="flex items-center justify-between">
                 <div className="font-mono text-sm">
@@ -100,28 +100,28 @@ export function WalletConnect() {
                   ) : (
                     <Copy className="h-4 w-4" />
                   )}
-                  <span className="sr-only">アドレスをコピー</span>
+                  <span className="sr-only">Address copy </span>
                 </Button>
               </div>
             </div>
 
             <div className="border-t pt-4">
               <div className="flex items-center justify-between mb-2">
-                <div className="text-sm font-medium">データ共有</div>
+                <div className="text-sm font-medium">Share data</div>
                 <Switch
                   checked={dataSharing}
                   onCheckedChange={setDataSharing}
-                  aria-label="データ共有の切り替え"
+                  aria-label="Switching data sharing"
                 />
               </div>
               <div className="text-xs text-muted-foreground">
                 {isLoading ? (
                   <div className="flex items-center text-[#4872cc]">
                     <Loader2 className="h-3 w-3 mr-2 animate-spin" />
-                    データを読み込み中...
+                    Loading data...
                   </div>
                 ) : (
-                  "ウォレットデータを使用して、パーソナライズされたレコメンデーションを提供します"
+                  "Provides personalized recommendations using wallet data"
                 )}
               </div>
             </div>
@@ -129,7 +129,7 @@ export function WalletConnect() {
         ) : (
           <div className="flex flex-col items-center py-6 space-y-4">
             <div className="text-center text-muted-foreground">
-              ウォレットに接続して、パーソナライズされた体験を始めましょう
+              Connect to your Wallet and start your personalized experience!
             </div>
 
             {/* Custom connect button */}
@@ -141,26 +141,25 @@ export function WalletConnect() {
               {connecting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  接続中...
+                  Connecting...
                 </>
               ) : (
                 <>
-                  ウォレットを接続
+                  Connect wallet
                   <ExternalLink className="ml-2 h-4 w-4" />
                 </>
               )}
             </Button>
 
             <div className="text-xs text-muted-foreground mt-2 text-center">
-              <p>v0環境ではウォレット接続機能はシミュレーションのみです</p>
-              <p>実際のアプリでは、@mysten/dapp-kitを使用して接続します</p>
+              <p>Connect with @mysten/dapp-kit</p>
             </div>
           </div>
         )}
       </CardContent>
       {account && (
         <CardFooter className="border-t pt-4 text-xs text-muted-foreground">
-          ウォレットが正常に接続されました。すべての機能にアクセスできます。
+          Wallet has been successfully connected. All functions are accessible.
         </CardFooter>
       )}
     </Card>

@@ -48,13 +48,13 @@ export function ProductCard({
           variant="outline"
           className="rounded-full text-xs border-[#4872cc] text-[#4872cc] hover:bg-[#4872cc]/10"
         >
-          詳細を見る
+          Details
         </Button>
         <Button
           size="sm"
           className="rounded-full text-xs bg-[#4872cc] hover:bg-[#4872cc]/90"
         >
-          購入する
+          Buy
           <ExternalLink className="ml-2 h-3 w-3" />
         </Button>
       </CardFooter>

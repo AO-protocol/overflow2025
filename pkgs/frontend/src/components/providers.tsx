@@ -38,7 +38,9 @@ export function Providers({ children }: ProvidersProps) {
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
       <QueryClientProvider client={queryClient}>
         {mounted && isClient ? (
-          <DynamicWalletProviders networks={networks}>{children}</DynamicWalletProviders>
+          <DynamicWalletProviders networks={networks}>
+            {children}
+          </DynamicWalletProviders>
         ) : (
           children
         )}

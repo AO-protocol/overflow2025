@@ -7,10 +7,10 @@ const nextConfig: NextConfig = {
   devIndicators: {
     buildActivity: true,
   },
-  // ウォレット関連コンポーネントのビルドエラーを修正
+  // Fixed build errors in wallet-related components
   experimental: {
-    // SSRの最適化の際にクライアントサイドのコードを適切に処理
-    optimizePackageImports: ['@mysten/dapp-kit', '@tanstack/react-query']
+    // Proper handling of client-side code during SSR optimization
+    optimizePackageImports: ["@mysten/dapp-kit", "@tanstack/react-query"],
   },
 };
 
@@ -18,8 +18,8 @@ const config = withPWA({
   dest: "public",
   register: true,
   skipWaiting: true,
-  // PWA関連のブラウザ限定機能のSSRエラーを防止
-  disable: process.env.NODE_ENV === 'development',
+  // Prevent SSR errors in PWA-related browser-only functions
+  disable: process.env.NODE_ENV === "development",
 })(nextConfig);
 
 export default config;

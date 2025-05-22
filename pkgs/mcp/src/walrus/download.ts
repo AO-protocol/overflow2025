@@ -1,5 +1,5 @@
 /**
- * Walrusからファイルをダウンロードするためのスクリプト
+ * Script to download files from Walrus
  */
 
 import axios from "axios";
@@ -27,15 +27,15 @@ const account = privateKeyToAccount(privateKey);
 // Create an axios client with payment interceptor using x402-axios
 const client = withPaymentInterceptor(axios.create({ baseURL }), account);
 
-// Walrusの設定
+// Walrus settings
 const AGGREGATOR = "https://aggregator.walrus-testnet.walrus.space";
 
 /**
- * Walrusからファイルをダウンロードする関数
+ * Script to download files from Walrus
  *
- * @param blobId ダウンロードするBlobのID
- * @param outputPath 保存先のパス
- * @returns ダウンロードされたファイルのパスと情報
+ * @param blobId Download Blob ID
+ * @param outputPath Save path
+ * @returns Downloaded file paths and information
  */
 export async function downloadFile(
   blobId: string,
@@ -51,20 +51,20 @@ export async function downloadFile(
     const res = await client.get(endpointPath);
     console.log("x402 response status", res.status);
     console.log("x402 response data", res.data);
-    // BlobをGETリクエストでダウンロード
+    // Download Blob with GET request
     const response = await fetch(downloadUrl);
 
     if (response.status !== 200) {
       throw new Error(`Download failed with status: ${response.status}`);
     }
 
-    // レスポンスヘッダーからContent-Typeを取得
+    // Get Content-Type from response header
     const contentType =
       response.headers.get("content-type") || "application/octet-stream";
     const buffer = await response.arrayBuffer();
     const fileData = Buffer.from(buffer);
 
-    // 出力パスが指定されていない場合、一時的なファイル名を生成
+    // Generates a temporary file name if no output path is specified
     const finalOutputPath =
       outputPath ||
       path.join(
@@ -72,12 +72,12 @@ export async function downloadFile(
         `downloaded-${blobId.substring(0, 8)}${getExtensionFromMime(contentType)}`
       );
 
-    // ファイルを保存
+    // Save File
     fs.writeFileSync(finalOutputPath, fileData);
 
     console.log(`File downloaded successfully to: ${finalOutputPath}`);
 
-    // 基本的な結果オブジェクトを作成
+    // Create basic result object
     const result = {
       filePath: finalOutputPath,
       blobId,
@@ -87,7 +87,7 @@ export async function downloadFile(
     };
 
     try {
-      // メタデータを取得（オプション - 失敗しても処理を続行）
+      // Retrieve metadata (optional - continue processing if failed)
       const metadataUrl = `${AGGREGATOR}/v1/blobs/${blobId}/info`;
       console.log(`Fetching metadata from: ${metadataUrl}`);
 
@@ -130,7 +130,7 @@ export async function downloadFile(
 }
 
 /**
- * MIMEタイプから適切なファイル拡張子を取得する関数
+ * Function to get the appropriate file extension from the MIME type
  */
 function getExtensionFromMime(mimeType: string): string {
   const mimeToExtension: Record<string, string> = {
