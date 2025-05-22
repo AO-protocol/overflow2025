@@ -49,9 +49,7 @@ export function FavoritesSidebar({
         {favorites.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-40 text-center p-4">
             <Heart className="h-8 w-8 text-muted-foreground/50 mb-2" />
-            <p className="text-sm text-muted-foreground">
-              No favorites yet.
-            </p>
+            <p className="text-sm text-muted-foreground">No favorites yet.</p>
             <p className="text-xs text-muted-foreground/70 mt-1">
               Click on the heart icon in the message to save it.
             </p>

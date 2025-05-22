@@ -56,9 +56,7 @@ export function WalletConnect() {
       setConnecting(false);
 
       // Show alert with instructions (in a real app, this would trigger the wallet connection)
-      alert(
-        "Wallet selection modal appears"
-      );
+      alert("Wallet selection modal appears");
 
       // For demo purposes, you could redirect to Sui wallet website
       if (confirm("Open Sui Wallet website?")) {

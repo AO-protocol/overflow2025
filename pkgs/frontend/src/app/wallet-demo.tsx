@@ -49,9 +49,7 @@ export default function WalletDemo() {
             onClick={toggleConnection}
             className="w-full rounded-full bg-[#4872cc] hover:bg-[#4872cc]/90"
           >
-            {connected
-              ? "Disconnect Wallet"
-              : "Simulate wallet connection"}
+            {connected ? "Disconnect Wallet" : "Simulate wallet connection"}
           </Button>
 
           {connected && (

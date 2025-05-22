@@ -168,7 +168,6 @@ export default function Page() {
             <div className="flex flex-col gap-4 p-4 md:p-6 pb-20">
               {messages.length === 0 ? (
                 <div className="flex h-[60vh] flex-col items-center justify-center gap-3 text-center">
-
                   <h2 className="text-2xl font-medium tracking-tight text-[#4872cc]">
                     Welcome to AO
                   </h2>
