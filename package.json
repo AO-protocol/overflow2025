@@ -9,7 +9,8 @@
     "check": "biome check --apply .",
     "frontend": "pnpm --filter frontend",
     "mcp": "pnpm --filter mcp",
-    "backend": "pnpm --filter backend"
+    "backend": "pnpm --filter backend",
+    "cdk": "pnpm --filter cdk"
   },
   "keywords": [],
   "author": "",

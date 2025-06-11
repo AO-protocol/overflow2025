@@ -6,7 +6,7 @@
     "dev": "tsx ./src/index.ts",
     "build": "tsc",
     "start": "node --experimental-modules --es-module-specifier-resolution=node ./dist/index.js",
-    "docker:build": "docker build -t backend-api .",
+    "docker:build": "docker build --platform linux/amd64 -t x402-backend-api .",
     "docker:run": "docker run -p 4021:4021 --env-file .env backend-api"
   },
   "dependencies": {

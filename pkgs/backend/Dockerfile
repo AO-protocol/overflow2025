@@ -1,5 +1,5 @@
-# Use Node.js 20 as the base image
-FROM node:20-slim
+# Use Node.js 20 as the base image with platform specification
+FROM --platform=linux/amd64 node:20-slim
 
 # Set working directory
 WORKDIR /app

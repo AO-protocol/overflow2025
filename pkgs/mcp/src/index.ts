@@ -107,4 +107,13 @@ server.tool(
 );
 
 const transport = new StdioServerTransport();
-await server.connect(transport);
+
+// Use async IIFE to handle top-level await
+(async () => {
+  try {
+    await server.connect(transport);
+  } catch (error) {
+    console.error("Failed to connect server:", error);
+    process.exit(1);
+  }
+})();
