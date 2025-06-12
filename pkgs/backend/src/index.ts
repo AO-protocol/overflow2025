@@ -30,7 +30,7 @@ app.use(
     exposeHeaders: ["Content-Length", "X-Requested-With"],
     maxAge: 600,
     credentials: true,
-  }),
+  })
 );
 
 // Health check endpoint (before payment middleware)
@@ -57,8 +57,8 @@ app.use(
     },
     {
       url: facilitatorUrl,
-    },
-  ),
+    }
+  )
 );
 
 // get weather report API

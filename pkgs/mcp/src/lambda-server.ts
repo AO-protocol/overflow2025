@@ -13,7 +13,8 @@ import { uploadFile } from "./walrus/upload.js";
 
 // Environment variables
 const PORT = Number.parseInt(process.env.PORT || "8080", 10);
-const RESOURCE_SERVER_URL = process.env.RESOURCE_SERVER_URL || "http://localhost:4021";
+const RESOURCE_SERVER_URL =
+  process.env.RESOURCE_SERVER_URL || "http://localhost:4021";
 
 // Create an MCP server
 const server = new McpServer({
@@ -55,7 +56,7 @@ server.tool(
         ],
       };
     }
-  },
+  }
 );
 
 server.tool(
@@ -108,7 +109,7 @@ server.tool(
         ],
       };
     }
-  },
+  }
 );
 
 server.tool(
@@ -156,7 +157,7 @@ server.tool(
         ],
       };
     }
-  },
+  }
 );
 
 // Create HTTP transport
@@ -192,7 +193,7 @@ app.get("/mcp", async (req, res) => {
         message: "Method not allowed.",
       },
       id: null,
-    }),
+    })
   );
 });
 
@@ -205,7 +206,7 @@ app.delete("/mcp", async (req, res) => {
         message: "Method not allowed.",
       },
       id: null,
-    }),
+    })
   );
 });
 
@@ -226,7 +227,7 @@ const ensureServerConnection = async () => {
 // Lambda handler
 export const handler = async (
   event: APIGatewayProxyEvent,
-  context: Context,
+  context: Context
 ): Promise<APIGatewayProxyResult> => {
   await ensureServerConnection();
   const serverlessHandler = serverlessExpress({ app });

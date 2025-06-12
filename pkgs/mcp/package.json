@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "tsx ./src/index.ts",
-    "build": "tsc && cp run.sh dist/ && cp package.json dist/",
+    "build": "tsc && cp run.sh dist/ && cp package.json dist/ && cp esbuild.js dist/",
     "start": "node ./dist/index.js",
     "lambda": "tsx ./src/lambda-server.ts",
     "format": "prettier -c .prettierrc --write \"**/*.{ts,js,cjs,json,md}\"",
@@ -35,6 +35,7 @@
     "node-fetch": "^3.3.2",
     "prettier": "3.5.2",
     "tsx": "^4.7.0",
-    "typescript": "^5.3.0"
+    "typescript": "^5.3.0",
+    "esbuild": "^0.25.5"
   }
 }

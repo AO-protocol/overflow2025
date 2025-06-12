@@ -24,7 +24,8 @@
       "**/.github/**",
       "**/.vscode/**",
       "**/.idea/**",
-      "**/.DS_Store"
+      "**/.DS_Store",
+      "**/cdk.out/**"
     ]
   },
   "javascript": {
