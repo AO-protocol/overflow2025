@@ -1,3 +1,4 @@
 .env
 mcp.json
 dist/
+bundle.js

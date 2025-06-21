@@ -242,17 +242,14 @@ export const handler = async (
   });
 };
 
-// Start the server for local development
-if (!process.env.AWS_LAMBDA_FUNCTION_NAME) {
-  server
-    .connect(transport)
-    .then(() => {
-      app.listen(PORT, () => {
-        console.log(`MCP server listening on port ${PORT}`);
-      });
-    })
-    .catch((error) => {
-      console.error("Server setup failed:", error);
-      process.exit(1);
+server
+  .connect(transport)
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`MCP server listening on port ${PORT}`);
     });
-}
+  })
+  .catch((error) => {
+    console.error("Server setup failed:", error);
+    process.exit(1);
+  });

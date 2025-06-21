@@ -122,6 +122,12 @@ ECSタスクが起動しない場合の対処法：
 }
 ```
 
+### test MCP
+
+```bash
+pnpm cdk run test-mcp
+```
+
 ### destroy
 
 ```bash
@@ -318,3 +324,33 @@ graph TB
 - **ログ監視**: CloudWatch Logsでの集約ログ管理
 - **自動復旧**: ECSサービスでの自動タスク再起動
 - **スケーリング**: トラフィックに応じた自動スケーリング
+
+### プロンプト例
+
+- **アップロード**
+
+  ```bash
+  Upload this file to Walrus.
+  File path: /path/to/your/file.txt
+  Storage period: 10
+  ```
+
+  レスポンス例
+
+  ```json
+  {
+    "status": "success",
+    "blobId": "eY-foaTn9LTwqfxy0Q_wW4YURADxG_MZK-nrtjhSjGk",
+    "blobUrl": "https://aggregator.walrus-testnet.walrus.space/v1/blobs/eY-foaTn9LTwqfxy0Q_wW4YURADxG_MZK-nrtjhSjGk",
+    "endEpoch": 89,
+    "suiUrl": "https://suiscan.xyz/testnet/object/0xee852beb1aa45d8740024881e81253568b22861175eda61e5ab8be755123b9f7"
+  }
+  ```
+
+- **ダウンロード**
+
+  ```bash
+  Download the file from Walrus.
+  BlobID: eY-foaTn9LTwqfxy0Q_wW4YURADxG_MZK-nrtjhSjGk
+  Save location: /Users/harukikondo/git/overflow2025/pkgs/mcp/samples/downloaded.txt
+  ```

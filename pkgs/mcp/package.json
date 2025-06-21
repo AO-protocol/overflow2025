@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "tsx ./src/index.ts",
-    "build": "tsc && cp run.sh dist/ && cp package.json dist/ && cp esbuild.js dist/",
+    "build": "tsc && node esbuild.js",
     "start": "node ./dist/index.js",
     "lambda": "tsx ./src/lambda-server.ts",
     "format": "prettier -c .prettierrc --write \"**/*.{ts,js,cjs,json,md}\"",

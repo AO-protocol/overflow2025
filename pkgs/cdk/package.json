@@ -9,6 +9,7 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "jest",
+    "test-mcp": "tsx src/client.ts",
     "cdk": "cdk",
     "diff": "npx cdk diff",
     "deploy": "npx cdk deploy",
@@ -25,9 +26,11 @@
     "typescript": "~5.6.3"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
     "aws-cdk-lib": "2.195.0",
     "constructs": "^10.0.0",
     "dotenv": "^16.5.0",
-    "esbuild": "^0.25.5"
+    "esbuild": "^0.25.5",
+    "tsx": "^4.7.0"
   }
 }

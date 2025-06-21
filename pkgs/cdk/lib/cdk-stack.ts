@@ -87,68 +87,116 @@ export class CdkStack extends cdk.Stack {
     });
 
     // Create Lambda function for MCP server
-    const mcpLambdaFunction = new lambda.Function(this, "MCPServerFunction", {
-      runtime: lambda.Runtime.NODEJS_20_X,
-      code: lambda.Code.fromAsset(join(__dirname, "../../mcp"), {
-        bundling: {
-          image: lambda.Runtime.NODEJS_20_X.bundlingImage,
-          command: ["echo", "Docker bundling disabled"],  // Dummy command
-          local: {
-            tryBundle(outputDir: string) {
-              try {
-                const sourceDir = join(__dirname, "../../mcp");
+    const mcpLambdaFunction = new lambda.Function(
+      this,
+      "x402WalrusMCPServerFunction",
+      {
+        runtime: lambda.Runtime.NODEJS_20_X,
+        code: lambda.Code.fromAsset(join(__dirname, "../../mcp"), {
+          bundling: {
+            image: lambda.Runtime.NODEJS_20_X.bundlingImage,
+            user: "root",
+            command: ["echo", "Using local bundling"], // Dummy command - local bundling will be used
+            local: {
+              tryBundle(outputDir: string) {
+                try {
+                  const sourceDir = join(__dirname, "../../mcp");
+                  console.log(
+                    `Building MCP Lambda from: ${sourceDir} to: ${outputDir}`
+                  );
 
-                // Build the project first
-                execSync("npm run build", { 
-                  cwd: sourceDir, 
-                  stdio: "inherit" 
-                });
+                  // Copy necessary files (not node_modules)
+                  const filesToCopy = [
+                    "src",
+                    "package.json",
+                    "tsconfig.json",
+                    "esbuild.js",
+                    "run.sh",
+                  ];
 
-                // Copy built dist files
-                execSync(`cp -r ${sourceDir}/dist/* ${outputDir}/`, {
-                  stdio: "inherit",
-                });
+                  for (const file of filesToCopy) {
+                    const srcPath = join(sourceDir, file);
+                    const destPath = join(outputDir, file);
+                    if (fs.existsSync(srcPath)) {
+                      execSync(`cp -r ${srcPath} ${destPath}`, {
+                        stdio: "inherit",
+                      });
+                    }
+                  }
 
-                // Copy minimal package.json (only production dependencies)
-                const packageJsonPath = join(sourceDir, "package.json");
-                const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
-                const prodPackageJson = {
-                  name: packageJson.name,
-                  version: packageJson.version,
-                  dependencies: packageJson.dependencies,
-                  main: packageJson.main || "lambda-server.js"
-                };
-                
-                fs.writeFileSync(
-                  join(outputDir, "package.json"), 
-                  JSON.stringify(prodPackageJson, null, 2)
-                );
+                  // Install dependencies
+                  console.log("Installing dependencies...");
+                  execSync("npm install --no-package-lock --no-save", {
+                    cwd: outputDir,
+                    stdio: "inherit",
+                  });
 
-                // Install only production dependencies in output directory
-                execSync("npm install --production --no-package-lock", {
-                  cwd: outputDir,
-                  stdio: "inherit",
-                });
+                  // Build the project (tsc + esbuild)
+                  console.log("Building project...");
+                  execSync("npm run build", {
+                    cwd: outputDir,
+                    stdio: "inherit",
+                  });
 
-                return true;
-              } catch (error) {
-                console.error("Local bundling failed:", error);
-                return false;
-              }
+                  // Clean up files not needed in Lambda
+                  console.log("Cleaning up files...");
+                  const filesToRemove = [
+                    "package.json",
+                    "node_modules",
+                    "tsconfig.json",
+                    "src",
+                    "esbuild.js",
+                  ];
+
+                  for (const file of filesToRemove) {
+                    const filePath = join(outputDir, file);
+                    if (fs.existsSync(filePath)) {
+                      execSync(`rm -rf ${filePath}`, { stdio: "inherit" });
+                    }
+                  }
+
+                  // Make run.sh executable
+                  execSync(`chmod +x ${join(outputDir, "run.sh")}`, {
+                    stdio: "inherit",
+                  });
+
+                  // Verify bundle.js exists
+                  const bundlePath = join(outputDir, "bundle.js");
+                  if (!fs.existsSync(bundlePath)) {
+                    throw new Error("bundle.js was not created");
+                  }
+
+                  console.log("Local bundling completed successfully");
+                  return true;
+                } catch (error) {
+                  console.error("Local bundling failed:", error);
+                  return false;
+                }
+              },
             },
           },
+        }),
+        handler: "run.sh",
+        environment: {
+          AWS_LAMBDA_EXEC_WRAPPER: "/opt/bootstrap",
+          AWS_LAMBDA_INVOKE_MODE: "response_stream",
+          RUST_LOG: "info",
+          ENDPOINT_PATH: ENDPOINT_PATH || "/download",
+          PRIVATE_KEY: PRIVATE_KEY || "",
+          RESOURCE_SERVER_URL: `http://${backendService.loadBalancer.loadBalancerDnsName}`,
         },
-      }),
-      handler: "run.sh",
-      environment: {
-        ENDPOINT_PATH: ENDPOINT_PATH || "/download",
-        PRIVATE_KEY: PRIVATE_KEY || "",
-        RESOURCE_SERVER_URL: `http://${backendService.loadBalancer.loadBalancerDnsName}`,
-      },
-      timeout: cdk.Duration.minutes(5),
-      memorySize: 1024,
-      architecture: lambda.Architecture.X86_64,
-    });
+        timeout: cdk.Duration.minutes(15), // Lambda maximum timeout is 15 minutes (900 seconds)
+        memorySize: 1024,
+        architecture: lambda.Architecture.X86_64,
+        layers: [
+          lambda.LayerVersion.fromLayerVersionArn(
+            this,
+            "LambdaWebAdapterLayer",
+            `arn:aws:lambda:${this.region}:753240598075:layer:LambdaAdapterLayerX86:24`
+          ),
+        ],
+      }
+    );
 
     // Create Function URL for the MCP server
     const mcpFunctionUrl = mcpLambdaFunction.addFunctionUrl({

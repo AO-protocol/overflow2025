@@ -25,7 +25,8 @@
       "**/.vscode/**",
       "**/.idea/**",
       "**/.DS_Store",
-      "**/cdk.out/**"
+      "**/cdk.out/**",
+      "**/bundle.js"
     ]
   },
   "javascript": {
