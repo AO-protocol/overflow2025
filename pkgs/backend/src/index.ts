@@ -73,8 +73,9 @@ app.get("/weather", async (c) => {
 
 // get download file API
 app.get("/download", async (c) => {
+  console.log("Download endpoint accessed!!!");
   return c.json({
-    resulut: "pay to download",
+    result: "pay to download",
   });
 });
 

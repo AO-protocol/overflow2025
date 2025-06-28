@@ -137,6 +137,9 @@ server.tool(
       })
       .parse(args);
 
+    console.log("Downloading file with blobId:", blobId);
+    console.log("Output path:", outputPath);
+
     try {
       const result = await downloadFile(blobId, outputPath);
       return {

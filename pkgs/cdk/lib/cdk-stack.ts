@@ -57,9 +57,9 @@ export class CdkStack extends cdk.Stack {
               PORT: "4021",
               NODE_ENV: "production",
               // Add other environment variables as needed
-              FACILITATOR_URL: FACILITATOR_URL || "https://facilitator.x402.io",
-              ADDRESS: ADDRESS || "0x1234567890123456789012345678901234567890",
-              NETWORK: NETWORK || "base-sepolia",
+              FACILITATOR_URL: FACILITATOR_URL as string,
+              ADDRESS: ADDRESS  as string,
+              NETWORK: NETWORK as string,
             },
             logDriver: ecs.LogDrivers.awsLogs({
               streamPrefix: "x402-backend",
