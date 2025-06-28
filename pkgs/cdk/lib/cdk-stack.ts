@@ -151,20 +151,29 @@ export class CdkStack extends cdk.Stack {
                   for (const file of filesToRemove) {
                     const filePath = join(outputDir, file);
                     if (fs.existsSync(filePath)) {
+                      console.log(`Removing: ${filePath}`);
                       execSync(`rm -rf ${filePath}`, { stdio: "inherit" });
                     }
                   }
 
                   // Make run.sh executable
-                  execSync(`chmod +x ${join(outputDir, "run.sh")}`, {
-                    stdio: "inherit",
-                  });
+                  const runShPath = join(outputDir, "run.sh");
+                  if (fs.existsSync(runShPath)) {
+                    execSync(`chmod +x ${runShPath}`, {
+                      stdio: "inherit",
+                    });
+                  }
 
                   // Verify bundle.js exists
                   const bundlePath = join(outputDir, "bundle.js");
                   if (!fs.existsSync(bundlePath)) {
                     throw new Error("bundle.js was not created");
                   }
+                  console.log(`Bundle file created successfully: ${bundlePath}`);
+                  
+                  // List final contents
+                  console.log("Final Lambda package contents:");
+                  execSync(`ls -la ${outputDir}`, { stdio: "inherit" });
 
                   console.log("Local bundling completed successfully");
                   return true;
