@@ -333,6 +333,7 @@ graph TB
   Upload this file to Walrus.
   File path: /path/to/your/file.txt
   Storage period: 10
+  use aws-x402-walrus-mcp
   ```
 
   レスポンス例

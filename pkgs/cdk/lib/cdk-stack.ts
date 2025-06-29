@@ -86,7 +86,7 @@ export class CdkStack extends cdk.Stack {
       unhealthyThresholdCount: 5,
     });
 
-    // Create Lambda function for MCP server
+    // Create Lambda function for MCP server (force rebuild v3 - bundle.js fix)
     const mcpLambdaFunction = new lambda.Function(
       this,
       "x402WalrusMCPServerFunction",
@@ -96,7 +96,7 @@ export class CdkStack extends cdk.Stack {
           bundling: {
             image: lambda.Runtime.NODEJS_20_X.bundlingImage,
             user: "root",
-            command: ["echo", "Using local bundling"], // Dummy command - local bundling will be used
+            command: ["echo", "local bundling"], // Dummy command - local bundling will be used
             local: {
               tryBundle(outputDir: string) {
                 try {
@@ -111,6 +111,7 @@ export class CdkStack extends cdk.Stack {
                     "package.json",
                     "tsconfig.json",
                     "esbuild.js",
+                    "bundle.js",
                     "run.sh",
                   ];
 
@@ -126,10 +127,18 @@ export class CdkStack extends cdk.Stack {
 
                   // Install dependencies
                   console.log("Installing dependencies...");
-                  execSync("npm install --no-package-lock --no-save", {
-                    cwd: outputDir,
-                    stdio: "inherit",
-                  });
+                  try {
+                    execSync("npm install --no-package-lock --no-save", {
+                      cwd: outputDir,
+                      stdio: "inherit",
+                    });
+                  } catch (error) {
+                    console.warn("npm install failed, trying with --force");
+                    execSync("npm install --no-package-lock --no-save --force", {
+                      cwd: outputDir,
+                      stdio: "inherit",
+                    });
+                  }
 
                   // Build the project (tsc + esbuild)
                   console.log("Building project...");
@@ -138,14 +147,25 @@ export class CdkStack extends cdk.Stack {
                     stdio: "inherit",
                   });
 
-                  // Clean up files not needed in Lambda
+                  // Verify bundle.js exists before cleanup
+                  const bundlePathBeforeCleanup = join(outputDir, "bundle.js");
+                  console.log(`Checking for bundle.js before cleanup: ${bundlePathBeforeCleanup}`);
+                  if (!fs.existsSync(bundlePathBeforeCleanup)) {
+                    console.error("bundle.js was not created by build process");
+                    // List all files to debug
+                    execSync(`find ${outputDir} -name "*.js" -type f`, { stdio: "inherit" });
+                    throw new Error("bundle.js was not created by build process");
+                  }
+
+                  // Clean up files not needed in Lambda (but keep bundle.js and run.sh)
                   console.log("Cleaning up files...");
                   const filesToRemove = [
                     "package.json",
-                    "node_modules",
+                    "node_modules", 
                     "tsconfig.json",
                     "src",
                     "esbuild.js",
+                    "dist", // distフォルダも削除（bundle.jsがあるので不要）
                   ];
 
                   for (const file of filesToRemove) {
@@ -164,12 +184,16 @@ export class CdkStack extends cdk.Stack {
                     });
                   }
 
-                  // Verify bundle.js exists
+                  // Verify bundle.js still exists after cleanup
                   const bundlePath = join(outputDir, "bundle.js");
                   if (!fs.existsSync(bundlePath)) {
-                    throw new Error("bundle.js was not created");
+                    throw new Error("bundle.js was removed during cleanup");
                   }
-                  console.log(`Bundle file created successfully: ${bundlePath}`);
+                  console.log(`Bundle file exists after cleanup: ${bundlePath}`);
+                  
+                  // Get bundle.js file size
+                  const bundleStats = fs.statSync(bundlePath);
+                  console.log(`Bundle file size: ${(bundleStats.size / 1024 / 1024).toFixed(2)} MB`);
                   
                   // List final contents
                   console.log("Final Lambda package contents:");
