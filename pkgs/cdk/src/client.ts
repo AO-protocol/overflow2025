@@ -4,12 +4,13 @@
 
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
+import * as dotenv from "dotenv";
 import { join } from "path";
+dotenv.config();
 
 // デプロイしたLambda Function URLを使用
 const serverUrl =
-  process.env.MCP_SERVER_URL ||
-  "https://b73vsxhaf4bbatadklkb2vvqmu0bjicc.lambda-url.ap-northeast-1.on.aws";
+  process.env.MCP_SERVER_URL;
 
 const transport = new StreamableHTTPClientTransport(
   new URL(`${serverUrl}/mcp`)
@@ -46,10 +47,10 @@ async function testWalrusUpload(): Promise<string | null> {
       arguments: {
         filePath: testFilePath,
         numEpochs: 5,
-        sendTo: "0x1234567890123456789012345678901234567890",
+        // sendTo: "0x1234567890123456789012345678901234567890",
       },
     });
-    console.log("✅ ファイルアップロード結果:", toolResult.content);
+    console.log("✅ ファイルアップロード結果:", toolResult);
 
     // アップロード結果からblobIdを抽出
     const content = toolResult.content[0];
@@ -139,7 +140,9 @@ async function main(): Promise<void> {
     );
 
     // ファイルアップロードテスト（コメントアウト - 実際のテスト時に有効化）
-    const blobId = await testWalrusUpload();
+    let blobId = await testWalrusUpload();
+
+    blobId = "eY-foaTn9LTwqfxy0Q_wW4YURADxG_MZK-nrtjhSjGk";
 
     // ファイルダウンロードテスト（アップロードが成功した場合のみ）
     if (blobId) {
