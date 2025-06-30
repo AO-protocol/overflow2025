@@ -9,8 +9,7 @@ import { join } from "path";
 dotenv.config();
 
 // デプロイしたLambda Function URLを使用
-const serverUrl =
-  process.env.MCP_SERVER_URL;
+const serverUrl = process.env.MCP_SERVER_URL;
 
 const transport = new StreamableHTTPClientTransport(
   new URL(`${serverUrl}/mcp`)
@@ -38,7 +37,7 @@ async function testWalrusUpload(): Promise<string | null> {
   console.log("\n=== Walrusファイルアップロードテスト ===");
   try {
     // テスト用の小さなファイルパス（実際のファイルパスに変更してください）
-    const testFilePath = join(__dirname, "../../mcp/samples/sample.txt")
+    const testFilePath = join(__dirname, "../../mcp/samples/sample.txt");
 
     console.log("📄 アップロードするファイル:", testFilePath);
 

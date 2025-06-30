@@ -17,13 +17,8 @@ const privateKey = process.env.PRIVATE_KEY as Hex;
 const baseURL = process.env.RESOURCE_SERVER_URL as string; // e.g. https://example.com
 const endpointPath = process.env.ENDPOINT_PATH as string; // e.g. /weather
 
-console.log("Environment variables check:");
-console.log("PRIVATE_KEY:", privateKey ? "***SET***" : "NOT SET");
-console.log("RESOURCE_SERVER_URL:", baseURL || "NOT SET");
-console.log("ENDPOINT_PATH:", endpointPath || "NOT SET");
-
 if (!privateKey || !baseURL || !endpointPath) {
-  throw new Error(`Missing environment variables: ${!privateKey ? 'PRIVATE_KEY ' : ''}${!baseURL ? 'RESOURCE_SERVER_URL ' : ''}${!endpointPath ? 'ENDPOINT_PATH ' : ''}`);
+  throw new Error("Missing environment variables");
 }
 
 // Create a wallet client to handle payments

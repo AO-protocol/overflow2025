@@ -58,7 +58,7 @@ export class CdkStack extends cdk.Stack {
               NODE_ENV: "production",
               // Add other environment variables as needed
               FACILITATOR_URL: FACILITATOR_URL as string,
-              ADDRESS: ADDRESS  as string,
+              ADDRESS: ADDRESS as string,
               NETWORK: NETWORK as string,
             },
             logDriver: ecs.LogDrivers.awsLogs({
@@ -134,10 +134,13 @@ export class CdkStack extends cdk.Stack {
                     });
                   } catch (error) {
                     console.warn("npm install failed, trying with --force");
-                    execSync("npm install --no-package-lock --no-save --force", {
-                      cwd: outputDir,
-                      stdio: "inherit",
-                    });
+                    execSync(
+                      "npm install --no-package-lock --no-save --force",
+                      {
+                        cwd: outputDir,
+                        stdio: "inherit",
+                      }
+                    );
                   }
 
                   // Build the project (tsc + esbuild)
@@ -149,19 +152,25 @@ export class CdkStack extends cdk.Stack {
 
                   // Verify bundle.js exists before cleanup
                   const bundlePathBeforeCleanup = join(outputDir, "bundle.js");
-                  console.log(`Checking for bundle.js before cleanup: ${bundlePathBeforeCleanup}`);
+                  console.log(
+                    `Checking for bundle.js before cleanup: ${bundlePathBeforeCleanup}`
+                  );
                   if (!fs.existsSync(bundlePathBeforeCleanup)) {
                     console.error("bundle.js was not created by build process");
                     // List all files to debug
-                    execSync(`find ${outputDir} -name "*.js" -type f`, { stdio: "inherit" });
-                    throw new Error("bundle.js was not created by build process");
+                    execSync(`find ${outputDir} -name "*.js" -type f`, {
+                      stdio: "inherit",
+                    });
+                    throw new Error(
+                      "bundle.js was not created by build process"
+                    );
                   }
 
                   // Clean up files not needed in Lambda (but keep bundle.js and run.sh)
                   console.log("Cleaning up files...");
                   const filesToRemove = [
                     "package.json",
-                    "node_modules", 
+                    "node_modules",
                     "tsconfig.json",
                     "src",
                     "esbuild.js",
@@ -189,12 +198,16 @@ export class CdkStack extends cdk.Stack {
                   if (!fs.existsSync(bundlePath)) {
                     throw new Error("bundle.js was removed during cleanup");
                   }
-                  console.log(`Bundle file exists after cleanup: ${bundlePath}`);
-                  
+                  console.log(
+                    `Bundle file exists after cleanup: ${bundlePath}`
+                  );
+
                   // Get bundle.js file size
                   const bundleStats = fs.statSync(bundlePath);
-                  console.log(`Bundle file size: ${(bundleStats.size / 1024 / 1024).toFixed(2)} MB`);
-                  
+                  console.log(
+                    `Bundle file size: ${(bundleStats.size / 1024 / 1024).toFixed(2)} MB`
+                  );
+
                   // List final contents
                   console.log("Final Lambda package contents:");
                   execSync(`ls -la ${outputDir}`, { stdio: "inherit" });
