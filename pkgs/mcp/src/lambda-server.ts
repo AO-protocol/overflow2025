@@ -81,16 +81,30 @@ server.tool(
     required: ["filePath", "numEpochs"],
   },
   async (args) => {
-    const { filePath, numEpochs, sendTo } = z
-      .object({
-        filePath: z.string(),
-        numEpochs: z.number(),
-        sendTo: z.string().optional(),
-      })
-      .parse(args);
+    console.log("=== UPLOAD TOOL CALLED ===");
+    console.log("Raw args received:", JSON.stringify(args, null, 2));
 
     try {
+      const { filePath, numEpochs, sendTo } = z
+        .object({
+          filePath: z.string(),
+          numEpochs: z.number(),
+          sendTo: z.string().optional(),
+        })
+        .parse(args);
+
+      console.log(
+        "Parsed args - filePath:",
+        filePath,
+        "numEpochs:",
+        numEpochs,
+        "sendTo:",
+        sendTo
+      );
+
       const result = await uploadFile(filePath, numEpochs, sendTo);
+      console.log("Upload result:", JSON.stringify(result, null, 2));
+
       return {
         content: [
           {
@@ -100,6 +114,12 @@ server.tool(
         ],
       };
     } catch (error) {
+      console.error("Upload error:", error);
+      console.error(
+        "Error stack:",
+        error instanceof Error ? error.stack : String(error)
+      );
+
       return {
         content: [
           {
@@ -130,18 +150,22 @@ server.tool(
     required: ["blobId"],
   },
   async (args) => {
-    const { blobId, outputPath } = z
-      .object({
-        blobId: z.string(),
-        outputPath: z.string().optional(),
-      })
-      .parse(args);
-
-    console.log("Downloading file with blobId:", blobId);
-    console.log("Output path:", outputPath);
-
+    console.log("=== DOWNLOAD TOOL CALLED ===");
+    console.log("Raw args received:", JSON.stringify(args, null, 2));
+    
     try {
+      const { blobId, outputPath } = z
+        .object({
+          blobId: z.string(),
+          outputPath: z.string().optional(),
+        })
+        .parse(args);
+
+      console.log("Parsed args - blobId:", blobId, "outputPath:", outputPath);
+
       const result = await downloadFile(blobId, outputPath);
+      console.log("Download result:", JSON.stringify(result, null, 2));
+      
       return {
         content: [
           {
@@ -151,6 +175,12 @@ server.tool(
         ],
       };
     } catch (error) {
+      console.error("Download error:", error);
+      console.error(
+        "Error stack:",
+        error instanceof Error ? error.stack : String(error),
+      );
+      
       return {
         content: [
           {

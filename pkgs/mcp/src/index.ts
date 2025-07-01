@@ -74,6 +74,8 @@ server.tool(
   },
   async ({ blobId, outputPath }) => {
     try {
+      console.log(`bolbId: ${blobId}`);
+      console.log(`outputPath: ${outputPath}`);
       // file download
       const result = await downloadFile(blobId, outputPath);
       return {
