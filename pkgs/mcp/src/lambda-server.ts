@@ -13,9 +13,7 @@ import { uploadFile } from "./walrus/upload.js";
 
 // Environment variables
 const PORT = Number.parseInt(process.env.PORT || "8080", 10);
-const RESOURCE_SERVER_URL =
-  process.env.RESOURCE_SERVER_URL ||
-  "http://awsx40-backe-sh4quwo8qxwb-1187647147.ap-northeast-1.elb.amazonaws.com";
+const RESOURCE_SERVER_URL = process.env.RESOURCE_SERVER_URL!;
 
 console.log("Lambda function started!");
 console.log("Using RESOURCE_SERVER_URL:", RESOURCE_SERVER_URL);
@@ -44,31 +42,15 @@ server.tool(
   "upload-file-to-walrus",
   "Upload a file to Walrus storage",
   {
-    type: "object",
-    properties: {
-      filePath: {
-        type: "string",
-        description: "The path to the file to upload",
-      },
-      numEpochs: {
-        type: "number",
-        description: "Number of epochs to store the file",
-      },
-      sendTo: {
-        type: "string",
-        description: "Optional recipient address",
-      },
-    },
-    required: ["filePath", "numEpochs"],
+    filePath: z.string().describe("The path to the file to upload"),
+    numEpochs: z.number().describe("Number of epochs to store the file"),
+    sendTo: z.string().optional().describe("Optional recipient address"),
   },
-  async (args) => {
-    const { filePath, numEpochs, sendTo } = z
-      .object({
-        filePath: z.string(),
-        numEpochs: z.number(),
-        sendTo: z.string().optional(),
-      })
-      .parse(args);
+  async ({ filePath, numEpochs, sendTo }) => {
+    console.log("Upload tool called with args:");
+    console.log("filePath:", filePath);
+    console.log("numEpochs:", numEpochs);
+    console.log("sendTo:", sendTo);
 
     console.log("Uploading file:", filePath);
     console.log("Number of epochs:", numEpochs);
@@ -99,52 +81,100 @@ server.tool(
 
 server.tool(
   "download-file-from-walrus-and-pay-USDC-via-x402",
-  `
-    Download a file from Walrus decentralized storage network with automatic USDC payment processing through x402 payment gateway. 
-    This tool retrieves files stored on Walrus using their unique Blob ID, handles the payment verification, and saves the file to your specified location. 
-    The payment ensures access to premium download speeds and guaranteed availability.
-  `,
+  "Download a file from Walrus decentralized storage network with automatic USDC payment processing through x402 payment gateway. This tool retrieves files stored on Walrus using their unique Blob ID, handles the payment verification, and saves the file to your specified location. The payment ensures access to premium download speeds and guaranteed availability. When running in Lambda environment, the file content is returned as Base64 encoded data for local saving.",
   {
-    type: "object",
-    properties: {
-      blobId: {
-        type: "string",
-        description: "The blob ID of the file to download",
-      },
-      outputPath: {
-        type: "string",
-        description: "Optional output path for the downloaded file",
-      },
-    },
-    required: ["blobId"],
+    blobId: z.string().describe("The blob ID of the file to download"),
+    outputPath: z
+      .string()
+      .optional()
+      .describe("Optional output path for the downloaded file"),
   },
-  async (args) => {
-    const { blobId, outputPath } = z
-      .object({
-        blobId: z.string(),
-        outputPath: z.string().optional(),
-      })
-      .parse(args);
+  async ({ blobId, outputPath }) => {
+    console.log("Download tool called with args:");
+    console.log("blobId:", blobId);
+    console.log("outputPath:", outputPath);
 
     console.log("Downloading file with blobId:", blobId);
     console.log("Output path:", outputPath);
 
     try {
       const result = await downloadFile(blobId, outputPath);
+
+      // Lambda環境の場合、ファイル内容をBase64エンコードして返す
+      if (process.env.AWS_LAMBDA_FUNCTION_NAME) {
+        console.log("Running in Lambda environment, returning file content");
+        const fs = await import("node:fs");
+
+        if (fs.existsSync(result.filePath)) {
+          const fileContent = fs.readFileSync(result.filePath);
+          const base64Content = fileContent.toString("base64");
+
+          // ファイル名を決定
+          const originalExtension = getFileExtension(result.contentType);
+          const suggestedFilename =
+            outputPath ||
+            `downloaded-${blobId.substring(0, 8)}${originalExtension}`;
+
+          // Lambda環境の一時ファイルを削除
+          fs.unlinkSync(result.filePath);
+
+          return {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify({
+                  status: "success",
+                  message:
+                    "File downloaded from Walrus storage successfully. File content included as Base64 data.",
+                  blobId: result.blobId,
+                  contentType: result.contentType,
+                  size: result.size,
+                  suggestedFilename: suggestedFilename,
+                  originalOutputPath: outputPath,
+                  fileContent: base64Content,
+                  metadata: result.metadata,
+                  downloadUrl: `https://aggregator.walrus-testnet.walrus.space/v1/blobs/${blobId}`,
+                  instructions:
+                    "The file content is Base64 encoded. Decode and save to your desired location.",
+                }),
+              },
+            ],
+          };
+        } else {
+          throw new Error(`Downloaded file not found at: ${result.filePath}`);
+        }
+      }
+
+      // ローカル環境の場合は従来通り
       return {
         content: [
           {
             type: "text",
-            text: `File downloaded successfully: ${result}`,
+            text: JSON.stringify({
+              status: "success",
+              message: "File downloaded from Walrus storage and saved locally.",
+              filePath: result.filePath,
+              blobId: result.blobId,
+              contentType: result.contentType,
+              size: result.size,
+              metadata: result.metadata,
+              downloadUrl: `https://aggregator.walrus-testnet.walrus.space/v1/blobs/${blobId}`,
+            }),
           },
         ],
       };
     } catch (error) {
+      console.error("Download error:", error);
       return {
         content: [
           {
             type: "text",
-            text: `Error downloading file: ${error}`,
+            text: JSON.stringify({
+              status: "error",
+              message: error instanceof Error ? error.message : String(error),
+              blobId: blobId,
+              downloadUrl: `https://aggregator.walrus-testnet.walrus.space/v1/blobs/${blobId}`,
+            }),
           },
         ],
       };
@@ -155,18 +185,15 @@ server.tool(
 server.tool(
   "get-data-from-resource-server",
   "Get data from the resource server (in this example, the weather)",
-  {
-    type: "object",
-    properties: {},
-  },
+  {},
   async () => {
     try {
       console.log("リソースサーバーに接続を試行中:", RESOURCE_SERVER_URL);
-      
+
       // まず基本的な接続テストを行う
       const healthUrl = `${RESOURCE_SERVER_URL}/health`;
       console.log("ヘルスチェックURL:", healthUrl);
-      
+
       const response = await fetch(healthUrl, {
         method: "GET",
         headers: {
@@ -174,19 +201,19 @@ server.tool(
           "User-Agent": "AWS-Lambda-MCP-Client/1.0",
         },
       });
-      
+
       console.log("レスポンス ステータス:", response.status);
       console.log("レスポンス ヘッダー:", Object.fromEntries(response.headers));
-      
+
       if (!response.ok) {
         throw new Error(
-          `HTTP error! status: ${response.status} ${response.statusText}`,
+          `HTTP error! status: ${response.status} ${response.statusText}`
         );
       }
-      
+
       const contentType = response.headers.get("content-type");
       console.log("Content-Type:", contentType);
-      
+
       let data: string;
       if (contentType?.includes("application/json")) {
         const jsonData = await response.json();
@@ -194,7 +221,7 @@ server.tool(
       } else {
         data = await response.text();
       }
-      
+
       return {
         content: [
           {
@@ -205,7 +232,8 @@ server.tool(
       };
     } catch (error) {
       console.error("リソースサーバーへの接続エラー:", error);
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       return {
         content: [
           {
@@ -215,7 +243,7 @@ server.tool(
         ],
       };
     }
-  },
+  }
 );
 
 // Create HTTP transport
@@ -287,12 +315,12 @@ const ensureServerConnection = async () => {
 // Lambda handler
 export const handler = async (
   event: APIGatewayProxyEvent,
-  context: Context,
+  context: Context
 ): Promise<APIGatewayProxyResult> => {
   console.log("Lambda handler called!");
   console.log("Event:", JSON.stringify(event, null, 2));
   console.log("Context:", JSON.stringify(context, null, 2));
-  
+
   try {
     await ensureServerConnection();
     const serverlessHandler = serverlessExpress({ app });
@@ -324,3 +352,27 @@ server
     console.error("Server setup failed:", error);
     process.exit(1);
   });
+
+/**
+ * Helper function to get file extension from content type
+ *
+ * @param contentType - MIME type of the file
+ * @returns File extension with dot prefix
+ */
+function getFileExtension(contentType: string): string {
+  const mimeToExtension: Record<string, string> = {
+    "image/jpeg": ".jpg",
+    "image/png": ".png",
+    "image/gif": ".gif",
+    "image/webp": ".webp",
+    "application/pdf": ".pdf",
+    "text/plain": ".txt",
+    "application/json": ".json",
+    "text/html": ".html",
+    "text/css": ".css",
+    "application/javascript": ".js",
+    "application/octet-stream": ".bin",
+  };
+
+  return mimeToExtension[contentType] || ".bin";
+}
