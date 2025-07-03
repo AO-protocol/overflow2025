@@ -6,6 +6,10 @@
 
 Sui Overflow2025 is a comprehensive blockchain application that demonstrates the integration of x402 payment protocol with Walrus storage through Model Context Protocol (MCP). The project features a multi-package monorepo structure with frontend, backend, MCP server, and AWS CDK infrastructure components.
 
+## Architecture
+
+![](./docs/overview.png)
+
 ## Project Structure
 
 ```
