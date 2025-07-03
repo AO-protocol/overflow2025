@@ -4,34 +4,45 @@
 
 ## Project Overview
 
-## Product Page
+Sui Overflow2025 is a comprehensive blockchain application that demonstrates the integration of x402 payment protocol with Walrus storage through Model Context Protocol (MCP). The project features a multi-package monorepo structure with frontend, backend, MCP server, and AWS CDK infrastructure components.
 
 ## Project Structure
 
 ```
 .
+├── docs/                # Project documentation and diagrams
 ├── pkgs/
-│   ├── frontend/    # Next.js frontend application
-│   ├── backend/     # Backend service with Hono
-│   └── mcp/         # Model Context Protocol implementation
+│   ├── frontend/        # Next.js 15 frontend with Sui wallet integration
+│   ├── backend/         # Hono-based API server with x402 payment handling
+│   ├── mcp/             # Model Context Protocol server for Walrus file operations
+│   └── cdk/             # AWS CDK infrastructure for cloud deployment
+├── .github/workflows/   # CI/CD pipeline configuration
+├── biome.json          # Code linting and formatting configuration
+├── pnpm-workspace.yaml # pnpm monorepo workspace configuration
+└── tsconfig.json       # TypeScript base configuration
 ```
 
 ## Technologies
 
-- **Package Manager**: pnpm
-- **Monorepo Structure**: pnpm workspaces
-- **Frontend**: Next.js 15 with React 19, TypeScript, and PWA support
-- **Backend**: Hono framework with TypeScript
-- **MCP**: Model Context Protocol SDK implementation
-- **Walrus**: Verification scripts for file operations
-- **Code Quality**: Biome (linting and formatting)
+- **Package Manager**: pnpm v8+ with workspace support
+- **Monorepo Structure**: pnpm workspaces for multi-package management
+- **Frontend**: Next.js 15 with React 19, TypeScript, PWA support, and Sui wallet integration
+- **Backend**: Hono framework with TypeScript, x402 payment protocol integration
+- **MCP**: Model Context Protocol SDK for Walrus file operations and blockchain payments
+- **Blockchain**: Sui blockchain integration with @mysten/dapp-kit and Sui.js
+- **Payment**: x402 protocol for USDC payments on Base Sepolia
+- **Storage**: Walrus decentralized storage network
+- **Infrastructure**: AWS CDK for cloud deployment and Lambda functions
+- **Code Quality**: Biome for linting and formatting
+- **CI/CD**: GitHub Actions for automated building and testing
 
 ## Getting Started
 
 ### Prerequisites
 
 - Node.js (v20+)
-- pnpm
+- pnpm v8+
+- A wallet with USDC on Base Sepolia for payment functionality
 
 ### Installation
 
@@ -44,140 +55,239 @@ cd overflow2025
 pnpm install
 ```
 
-### formatter
+### Development Commands
 
 ```bash
+# Format code with Biome
 pnpm format
+
+# Lint code
+pnpm lint
+
+# Check and apply fixes
+pnpm check
+
+# Package-specific commands
+pnpm frontend <command>  # Frontend-specific commands
+pnpm backend <command>   # Backend-specific commands
+pnpm mcp <command>       # MCP-specific commands
+pnpm cdk <command>       # CDK-specific commands
 ```
 
-### How to work
+### Environment Setup
 
-#### setup
+#### 1. Backend Configuration
 
-1. backend
-
-create `pkgs/backend/.env` file
+Create `pkgs/backend/.env` file:
 
 ```bash
 FACILITATOR_URL=https://x402.org/facilitator
 NETWORK=base-sepolia
-ADDRESS=
+ADDRESS=<your_wallet_address>
 ```
 
-2. mcp
+#### 2. MCP Configuration
 
-create `pkgs/mcp/.env` file
+Create `pkgs/mcp/.env` file:
 
 ```bash
 RESOURCE_SERVER_URL=http://localhost:4021
 ENDPOINT_PATH=/download
-PRIVATE_KEY=
+PRIVATE_KEY=<your_private_key_with_usdc_on_base_sepolia>
 ```
 
-3. frontend
+#### 3. Frontend Configuration
 
-create `pkgs/fronend/.env.local`
+Create `pkgs/frontend/.env.local` file:
 
 ```bash
-OPENAI_API_KEY=
-GOOGLE_GENERATIVE_AI_API_KEY=
-ANTHROPIC_API_KEY=
-PATH_TO_MCP=<PATT TO your repo>/overflow2025/pkgs/mcp/dist/index.js
+OPENAI_API_KEY=<your_openai_api_key>
+GOOGLE_GENERATIVE_AI_API_KEY=<your_google_ai_key>
+ANTHROPIC_API_KEY=<your_anthropic_key>
+PATH_TO_MCP=<absolute_path_to_repo>/overflow2025/pkgs/mcp/dist/index.js
 ```
 
-### Start Backend Server & MCP
+#### 4. CDK Configuration (Optional for AWS deployment)
 
-1. start backend Server
+Create `pkgs/cdk/.env` file:
+
+```bash
+FACILITATOR_URL=https://facilitator.x402.io
+NETWORK=base-sepolia
+ADDRESS=<your_wallet_address>
+ENDPOINT_PATH=/download/
+PRIVATE_KEY=<your_private_key>
+```
+
+### Running the Application (local)
+
+#### 1. Start Backend Server
 
 ```bash
 pnpm backend dev
 ```
 
-2. build MCP Server
+The backend API will be available at `http://localhost:4021`
+
+#### 2. Build and Configure MCP Server
 
 ```bash
 pnpm mcp build
 ```
 
-3. setup MCP config & start
-
-open VS Code's `settings/json` & add mcp config
+Configure MCP in VS Code's `settings.json`:
 
 ```json
 {
-  "x402-walrus": {
-    "command": "node",
-    "args": ["<absolute path to this repo>/pkgs/mcp/dist/index.js"],
-    "env": {
-      "PRIVATE_KEY": "<private key of a wallet with USDC on Base Sepolia>",
-      "RESOURCE_SERVER_URL": "http://localhost:4021",
-      "ENDPOINT_PATH": "/download"
+  "mcpServers": {
+    "x402-walrus": {
+      "command": "node",
+      "args": ["<absolute_path_to_repo>/pkgs/mcp/dist/index.js"],
+      "env": {
+        "PRIVATE_KEY": "<private_key_with_usdc_on_base_sepolia>",
+        "RESOURCE_SERVER_URL": "http://localhost:4021",
+        "ENDPOINT_PATH": "/download"
+      }
     }
   }
 }
 ```
 
-And Start MCP Server
-
-4. try to acucess via GitHub Copilot Agent Mode
-
-   - file upload
-
-     ```bash
-     Upload your file to Walrus.
-     File path:
-     `<absolute path to this repo>/pkgs/mcp/samples/sample.txt`
-     Storage period: 10
-     use aws-x402-walrus-mcp
-     ```
-
-   - file download
-
-     ```bash
-     Download the file from Walrus.
-     BlobID: [Retrieved at uploadblobId]
-
-     use aws-x402-walrus-mcp
-     ```
-
-     Download the file from Walrus.
-     BlobID: eY-foaTn9LTwqfxy0Q_wW4YURADxG_MZK-nrtjhSjGk
-
-     use aws-x402-walrus-mcp
-
-5. Start Frontend
+#### 3. Start Frontend Application
 
 ```bash
 pnpm frontend dev
 ```
 
+The frontend will be available at `http://localhost:3001`
+
+### Running the Application (AWS)
+
+#### 1. deploy 
+
+```bash
+pnpm cdk run deploy '*'
+```
+
+#### 2. destroy
+
+```bash
+pnpm cdk run destroy '*'
+```
+
+#### 3. Configure MCP Server
+
+Configure MCP in VS Code's `settings.json`:
+
+```json
+"aws-x402-walrus-mcp": {
+  "type": "sse",
+  "url": "<yoururl>/mcp",
+  "headers": {
+    "VERSION": "1.2",
+    "Accept": "application/json, text/event-stream",
+    "Content-Type": "application/json"
+  }
+},
+```
+
+### Using the MCP Server
+
+#### File Upload to Walrus
+
+Use GitHub Copilot with the MCP server to upload files:
+
+```bash
+Upload your file to Walrus.
+File path: <absolute_path_to_repo>/pkgs/mcp/samples/sample.txt
+Storage period: 10
+use x402-walrus-mcp
+```
+
+#### File Download from Walrus
+
+```bash
+Download the file from Walrus.
+BlobID: [blob_id_from_upload]
+use x402-walrus-mcp
+```
+
 ## Package Details
 
-### Frontend
+### Frontend (`pkgs/frontend`)
 
-Next.js 15 application with React 19, featuring:
+Next.js 15 application featuring:
 
-- Progressive Web App (PWA) capabilities
-- Tailwind CSS for styling
-- Mastra AI integration
+- **React 19** with TypeScript and modern hooks
+- **Sui Wallet Integration** using @mysten/dapp-kit
+- **Progressive Web App** (PWA) capabilities with next-pwa
+- **Styling**: Tailwind CSS with shadcn/ui components
+- **AI Integration**: Mastra AI framework with multiple providers (OpenAI, Google, Anthropic)
+- **State Management**: TanStack Query for server state
+- **Theme Support**: Dark/light mode with next-themes
 
-### Backend
+**Key Dependencies:**
+- @mysten/dapp-kit, @mysten/sui.js for Sui blockchain integration
+- @mastra/core, @mastra/mcp for AI and MCP functionality
+- @radix-ui components for accessible UI primitives
+- Tailwind CSS and lucide-react for styling and icons
 
-Hono-based backend service with:
+### Backend (`pkgs/backend`)
 
-- Node server implementation
-- x402 integration
+Hono-based API server with:
 
-### MCP
+- **Framework**: Hono with Node.js server adapter
+- **Payment Processing**: x402 protocol integration for USDC payments
+- **Environment**: Docker support for containerized deployment
+- **TypeScript**: Full TypeScript support with modern ES modules
 
-Model Context Protocol implementation with:
+**Key Dependencies:**
+- @hono/node-server for HTTP server
+- x402, x402-hono for payment protocol
+- dotenv for environment configuration
 
-- MCP SDK integration
-- Viem for blockchain interactions
+### MCP (`pkgs/mcp`)
 
-### Walrus
+Model Context Protocol server for Walrus operations:
 
-Verification scripts for file operations:
+- **Protocol**: MCP SDK for VS Code/GitHub Copilot integration
+- **Blockchain**: Viem for Ethereum/Base interactions
+- **Storage**: Walrus decentralized storage integration
+- **Payment**: x402-axios for automated payment handling
+- **Deployment**: AWS Lambda support with serverless-express
 
-- File upload and download functionality
-- TypeScript implementation
+**Key Dependencies:**
+- @modelcontextprotocol/sdk for MCP implementation
+- viem for blockchain interactions
+- x402-axios for payment-enabled HTTP requests
+- @vendia/serverless-express for Lambda deployment
+
+### CDK (`pkgs/cdk`)
+
+AWS Cloud Development Kit infrastructure:
+
+- **Infrastructure as Code**: AWS CDK v2 for cloud resources
+- **Deployment**: Lambda function deployment for MCP server
+- **Testing**: Jest for infrastructure testing
+- **Build**: esbuild for optimized Lambda bundles
+
+**Key Dependencies:**
+- aws-cdk-lib, constructs for CDK infrastructure
+- @modelcontextprotocol/sdk for MCP Lambda integration
+- esbuild for bundling and optimization
+
+## Architecture
+
+The project demonstrates a modern blockchain application architecture:
+
+1. **Frontend**: Sui wallet-enabled React application for user interaction
+2. **Backend**: Payment-enabled API server for file operations
+3. **MCP Server**: Bridge between AI tools and blockchain/storage services
+4. **Infrastructure**: Cloud-ready deployment with AWS CDK
+
+## Contributing
+
+1. Follow the monorepo structure and use pnpm workspaces
+2. Use Biome for code formatting: `pnpm format`
+3. Ensure all packages build successfully: `pnpm install && pnpm mcp build && pnpm frontend build`
+4. Test MCP integration with GitHub Copilot/VS Code
