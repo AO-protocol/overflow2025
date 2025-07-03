@@ -10,18 +10,6 @@ const server = new McpServer({
   version: "1.0.0",
 });
 
-// Add tools
-server.tool(
-  "get-data-from-resource-server",
-  "Get data from the resource server (in this example, the weather)",
-  {},
-  async () => {
-    return {
-      content: [{ type: "text", text: JSON.stringify("success!") }],
-    };
-  }
-);
-
 // Add Walrus upload file tool
 server.tool(
   "upload-file-to-walrus",

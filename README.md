@@ -128,6 +128,7 @@ And Start MCP Server
      File path:
      `<absolute path to this repo>/pkgs/mcp/samples/sample.txt`
      Storage period: 10
+     use aws-x402-walrus-mcp
      ```
 
    - file download
@@ -135,9 +136,14 @@ And Start MCP Server
      ```bash
      Download the file from Walrus.
      BlobID: [Retrieved at uploadblobId]
-     save location:
-     `<absolute path to this repo>/pkgs/mcp/samples/downloaded_file.txt`
+
+     use aws-x402-walrus-mcp
      ```
+
+     Download the file from Walrus.
+     BlobID: eY-foaTn9LTwqfxy0Q_wW4YURADxG_MZK-nrtjhSjGk
+
+     use aws-x402-walrus-mcp
 
 5. Start Frontend
 
