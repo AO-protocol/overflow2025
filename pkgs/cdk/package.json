@@ -1,0 +1,36 @@
+{
+  "name": "cdk",
+  "private": true,
+  "version": "0.1.0",
+  "bin": {
+    "cdk": "bin/cdk.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "jest",
+    "test-mcp": "tsx src/client.ts",
+    "cdk": "cdk",
+    "diff": "npx cdk diff",
+    "deploy": "npx cdk deploy",
+    "destroy": "npx cdk destroy",
+    "synth": "npx cdk synth"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "@types/node": "22.7.9",
+    "aws-cdk": "2.1015.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.5",
+    "ts-node": "^10.9.2",
+    "typescript": "~5.6.3"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "aws-cdk-lib": "2.195.0",
+    "constructs": "^10.0.0",
+    "dotenv": "^16.5.0",
+    "esbuild": "^0.25.5",
+    "tsx": "^4.7.0"
+  }
+}

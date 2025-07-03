@@ -10,18 +10,6 @@ const server = new McpServer({
   version: "1.0.0",
 });
 
-// Add tools
-server.tool(
-  "get-data-from-resource-server",
-  "Get data from the resource server (in this example, the weather)",
-  {},
-  async () => {
-    return {
-      content: [{ type: "text", text: JSON.stringify("success!") }],
-    };
-  }
-);
-
 // Add Walrus upload file tool
 server.tool(
   "upload-file-to-walrus",
@@ -74,6 +62,8 @@ server.tool(
   },
   async ({ blobId, outputPath }) => {
     try {
+      console.log(`bolbId: ${blobId}`);
+      console.log(`outputPath: ${outputPath}`);
       // file download
       const result = await downloadFile(blobId, outputPath);
       return {
@@ -107,4 +97,13 @@ server.tool(
 );
 
 const transport = new StdioServerTransport();
-await server.connect(transport);
+
+// Use async IIFE to handle top-level await
+(async () => {
+  try {
+    await server.connect(transport);
+  } catch (error) {
+    console.error("Failed to connect server:", error);
+    process.exit(1);
+  }
+})();

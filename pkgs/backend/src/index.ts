@@ -2,7 +2,8 @@ import { serve } from "@hono/node-server";
 import { config } from "dotenv";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { Network, Resource, paymentMiddleware } from "x402-hono";
+import type { Network, Resource } from "x402-hono";
+import { paymentMiddleware } from "x402-hono";
 // Import walrus functions from relative paths
 
 config();
@@ -31,6 +32,15 @@ app.use(
     credentials: true,
   })
 );
+
+// Health check endpoint (before payment middleware)
+app.get("/health", async (c) => {
+  return c.json({
+    status: "ok",
+    timestamp: new Date().toISOString(),
+    port,
+  });
+});
 
 app.use(
   paymentMiddleware(
@@ -63,8 +73,9 @@ app.get("/weather", async (c) => {
 
 // get download file API
 app.get("/download", async (c) => {
+  console.log("Download endpoint accessed!!!");
   return c.json({
-    resulut: "pay to download",
+    result: "pay to download",
   });
 });
 
