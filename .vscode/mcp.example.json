@@ -1,0 +1,21 @@
+{
+  "inputs": [],
+  "servers": {
+    "x402-walrus": {
+      "command": "node",
+      "args": [
+        "${workspaceFolder}/pkgs/mcp/dist/index.js"
+      ],
+      "envFile": "${workspaceFolder}/pkgs/mcp/.env"
+    },
+    "aws-x402-walrus-mcp": {
+      "type": "sse",
+      "url": "<your API endpoint>/mcp",
+      "headers": {
+        "VERSION": "1.2",
+        "Accept": "application/json, text/event-stream",
+        "Content-Type": "application/json"
+      }
+    }
+  }
+}

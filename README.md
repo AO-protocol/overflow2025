@@ -139,20 +139,19 @@ The backend API will be available at `http://localhost:4021`
 pnpm mcp build
 ```
 
-Configure MCP in VS Code's `settings.json`:
+Configure MCP in `.vscode/mcp.json`:
 
 ```json
 {
-  "mcpServers": {
+  "inputs": [],
+  "servers": {
     "x402-walrus": {
       "command": "node",
-      "args": ["<absolute_path_to_repo>/pkgs/mcp/dist/index.js"],
-      "env": {
-        "PRIVATE_KEY": "<private_key_with_usdc_on_base_sepolia>",
-        "RESOURCE_SERVER_URL": "http://localhost:4021",
-        "ENDPOINT_PATH": "/download"
-      }
-    }
+      "args": [
+        "${workspaceFolder}/pkgs/mcp/dist/index.js"
+      ],
+      "envFile": "${workspaceFolder}/pkgs/mcp/.env"
+    },
   }
 }
 ```
@@ -203,10 +202,15 @@ Use GitHub Copilot with the MCP server to upload files:
 
 ```bash
 Upload your file to Walrus.
-File path: <absolute_path_to_repo>/pkgs/mcp/samples/sample.txt
+File path: /Users/harukikondo/git/overflow2025/pkgs/mcp/samples/sample.txt
 Storage period: 10
 use x402-walrus-mcp
 ```
+
+Upload your file to Walrus.
+File path: <absolute_path_to_repo>/pkgs/mcp/samples/sample.txt
+Storage period: 10
+use x402-walrus-mcp
 
 #### File Download from Walrus
 
