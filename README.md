@@ -202,15 +202,10 @@ Use GitHub Copilot with the MCP server to upload files:
 
 ```bash
 Upload your file to Walrus.
-File path: /Users/harukikondo/git/overflow2025/pkgs/mcp/samples/sample.txt
-Storage period: 10
-use x402-walrus-mcp
-```
-
-Upload your file to Walrus.
 File path: <absolute_path_to_repo>/pkgs/mcp/samples/sample.txt
 Storage period: 10
 use x402-walrus-mcp
+```
 
 #### File Download from Walrus
 
