@@ -16,17 +16,69 @@ const SUI_VIEW_TX_URL = `https://suiscan.xyz/${SUI_NETWORK}/tx`;
 const SUI_VIEW_OBJECT_URL = `https://suiscan.xyz/${SUI_NETWORK}/object`;
 
 /**
+ * Function to upload a file to Walrus using base64 content (for Lambda environment)
+ *
+ * @param base64Content - Base64 encoded file content
+ * @param fileName - Name of the file including extension
+ * @param numEpochs - Storage duration (number of epochs)
+ * @param sendTo - Optional: Address to send the object to
+ * @returns Upload information
+ */
+export async function uploadFileFromBase64(
+  base64Content: string,
+  fileName: string,
+  numEpochs: number,
+  sendTo?: string,
+): Promise<any> {
+  console.log(`Uploading file from base64: ${fileName}`);
+  
+  // Create temporary file in /tmp directory (Lambda writeable directory)
+  const tempDir = "/tmp";
+  const filePath = path.join(tempDir, fileName);
+  
+  try {
+    // Decode base64 content and write to temporary file
+    const fileBuffer = Buffer.from(base64Content, "base64");
+    fs.writeFileSync(filePath, fileBuffer);
+    console.log(`Created temporary file: ${filePath}`);
+    
+    // Use existing upload logic
+    const result = await uploadFile(filePath, numEpochs, sendTo);
+    
+    // Clean up temporary file
+    try {
+      fs.unlinkSync(filePath);
+      console.log(`Cleaned up temporary file: ${filePath}`);
+    } catch (cleanupError) {
+      console.warn(`Failed to clean up temporary file: ${cleanupError}`);
+    }
+    
+    return result;
+  } catch (error) {
+    // Clean up temporary file in case of error
+    try {
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    } catch (cleanupError) {
+      console.warn(`Failed to clean up temporary file after error: ${cleanupError}`);
+    }
+    throw new Error(`Failed to upload file from base64: ${error}`);
+  }
+}
+
+/**
  * Function to upload a file to Walrus
  *
- * @param filePath Path of the file to be uploaded
- * @param numEpochs Storage duration (number of epochs)
- * @param sendTo Optional: Address to send the object to
+ * @param filePath - Path of the file to be uploaded
+ * @param numEpochs - Storage duration (number of epochs)
+ * @param sendTo - Optional: Address to send the object to
  * @returns Upload information
  */
 export async function uploadFile(
   filePath: string,
   numEpochs: number,
-  sendTo?: string
+  sendTo?: string,
 ): Promise<any> {
   console.log(`Uploading file: ${filePath}`);
   // Check if the file exists

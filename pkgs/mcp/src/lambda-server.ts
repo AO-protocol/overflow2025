@@ -7,6 +7,7 @@ import type {
   Context,
 } from "aws-lambda";
 import express from "express";
+import fetch from "node-fetch";
 import { z } from "zod";
 import { downloadFile } from "./walrus/download.js";
 import { uploadFile } from "./walrus/upload.js";
@@ -42,31 +43,70 @@ server.tool(
   "upload-file-to-walrus",
   "Upload a file to Walrus storage",
   {
-    filePath: z.string().describe("The path to the file to upload"),
+    fileContent: z
+      .string()
+      .describe("Base64 encoded file content (for Lambda environment)"),
+    fileName: z.string().describe("Name of the file including extension"),
     numEpochs: z.number().describe("Number of epochs to store the file"),
     sendTo: z.string().optional().describe("Optional recipient address"),
   },
-  async ({ filePath, numEpochs, sendTo }) => {
+  async ({ fileContent, fileName, numEpochs, sendTo }) => {
     console.log("Upload tool called with args:");
-    console.log("filePath:", filePath);
+    console.log("fileName:", fileName);
     console.log("numEpochs:", numEpochs);
     console.log("sendTo:", sendTo);
-
-    console.log("Uploading file:", filePath);
-    console.log("Number of epochs:", numEpochs);
-    console.log("Send to address:", sendTo);
+    console.log("fileContent length:", fileContent?.length || 0);
 
     try {
-      const result = await uploadFile(filePath, numEpochs, sendTo);
+      // Lambda環境では、Base64でエンコードされたファイル内容を受け取る
+      if (!fileContent || !fileName) {
+        throw new Error("fileContent and fileName are required");
+      }
+
+      // Base64をデコードして一時ファイルを作成
+      const fs = await import("node:fs");
+      const path = await import("node:path");
+      
+      const tempDir = "/tmp"; // Lambda環境で書き込み可能なディレクトリ
+      const tempFilePath = path.join(tempDir, fileName);
+      
+      console.log("Creating temporary file:", tempFilePath);
+      
+      // Base64デコード
+      const fileBuffer = Buffer.from(fileContent, "base64");
+      fs.writeFileSync(tempFilePath, fileBuffer);
+      
+      console.log("Temporary file created, uploading to Walrus...");
+      
+      // 既存のアップロード関数を使用
+      const result = await uploadFile(tempFilePath, numEpochs, sendTo);
+      
+      // 一時ファイルを削除
+      try {
+        fs.unlinkSync(tempFilePath);
+        console.log("Temporary file cleaned up");
+      } catch (cleanupError) {
+        console.warn("Failed to cleanup temporary file:", cleanupError);
+      }
+      
       return {
         content: [
           {
             type: "text",
-            text: `File uploaded successfully. Blob ID: ${result.blobId}`,
+            text: JSON.stringify({
+              status: "success",
+              message: "File uploaded to Walrus storage successfully",
+              blobId: result.blobId,
+              blobUrl: result.blobUrl,
+              endEpoch: result.endEpoch,
+              suiUrl: result.suiUrl,
+              fileName: fileName,
+            }),
           },
         ],
       };
     } catch (error) {
+      console.error("Upload error:", error);
       return {
         content: [
           {
@@ -76,7 +116,7 @@ server.tool(
         ],
       };
     }
-  }
+  },
 );
 
 server.tool(

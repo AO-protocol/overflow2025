@@ -173,13 +173,13 @@ The frontend will be available at `http://localhost:3001`
 #### 1. deploy 
 
 ```bash
-pnpm cdk run deploy '*'
+pnpm cdk run deploy '*' --require-approval never
 ```
 
 #### 2. destroy
 
 ```bash
-pnpm cdk run destroy '*'
+pnpm cdk run destroy '*' --force
 ```
 
 #### 3. Configure MCP Server

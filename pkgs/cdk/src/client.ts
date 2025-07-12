@@ -9,12 +9,8 @@ import { join } from "path";
 dotenv.config();
 
 // デプロイしたLambda Function URLを使用
-const serverUrl =
-  process.env.MCP_SERVER_URL ||
-  "https://5oefnxcjetk4xvobfiyhhpvkte0pmuof.lambda-url.ap-northeast-1.on.aws";
+const serverUrl = process.env.MCP_SERVER_URL;
 
-console.log("🔧 環境変数確認:");
-console.log("MCP_SERVER_URL:", process.env.MCP_SERVER_URL);
 console.log("使用するサーバーURL:", serverUrl);
 
 const transport = new StreamableHTTPClientTransport(
@@ -49,38 +45,54 @@ async function testWalrusUpload(): Promise<string | null> {
   const originalFilePath = join(__dirname, "../../mcp/samples/sample.txt");
 
   console.log("📄 ファイル存在チェック中...");
+  let fileContent: string;
+  let fileName: string;
+  
   try {
     const fs = await import("node:fs/promises");
     await fs.access(originalFilePath);
     targetFilePath = originalFilePath;
     console.log("✅ サンプルファイルが存在します:", originalFilePath);
+    
+    // ファイルをBase64エンコード
+    const fileBuffer = await fs.readFile(originalFilePath);
+    fileContent = fileBuffer.toString("base64");
+    fileName = "sample.txt";
   } catch (fileError) {
     console.log(
-      "⚠️  サンプルファイルが見つかりません。テストファイルを使用:",
+      "⚠️  サンプルファイルが見つかりません。テストファイルを作成します:",
       targetFilePath
     );
+    
+    // テストファイルを作成してBase64エンコード
+    const testContent = "This is a test file for Walrus upload test.\nCreated for Lambda environment testing.";
+    fileContent = Buffer.from(testContent, "utf8").toString("base64");
+    fileName = "test.txt";
   }
 
-  // 複数の引数形式でテストを試行
+  // 複数の引数形式でテストを試行（新しいAPI形式に対応）
   const testConfigs = [
     {
       name: "標準形式",
       arguments: {
-        filePath: targetFilePath,
+        fileContent: fileContent,
+        fileName: fileName,
         numEpochs: 5,
       },
     },
     {
       name: "文字列形式",
       arguments: {
-        filePath: targetFilePath,
+        fileContent: fileContent,
+        fileName: fileName,
         numEpochs: 5,
       },
     },
     {
       name: "最小形式",
       arguments: {
-        filePath: targetFilePath,
+        fileContent: fileContent,
+        fileName: fileName,
         numEpochs: 1,
       },
     },
@@ -89,7 +101,11 @@ async function testWalrusUpload(): Promise<string | null> {
   for (const config of testConfigs) {
     try {
       console.log(`\n🔄 ${config.name}でアップロードテスト中...`);
-      console.log("引数:", JSON.stringify(config.arguments, null, 2));
+      console.log("引数:", JSON.stringify({
+        fileContent: `[Base64 content - ${fileContent.length} chars]`,
+        fileName: config.arguments.fileName,
+        numEpochs: config.arguments.numEpochs
+      }, null, 2));
 
       const toolResult = await client.callTool({
         name: "upload-file-to-walrus",
