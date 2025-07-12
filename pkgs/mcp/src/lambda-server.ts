@@ -7,14 +7,13 @@ import type {
   Context,
 } from "aws-lambda";
 import express from "express";
-import fetch from "node-fetch";
 import { z } from "zod";
 import { downloadFile } from "./walrus/download.js";
 import { uploadFile } from "./walrus/upload.js";
 
 // Environment variables
 const PORT = Number.parseInt(process.env.PORT || "8080", 10);
-const RESOURCE_SERVER_URL = process.env.RESOURCE_SERVER_URL!;
+const RESOURCE_SERVER_URL = process.env.RESOURCE_SERVER_URL as string;
 
 console.log("Lambda function started!");
 console.log("Using RESOURCE_SERVER_URL:", RESOURCE_SERVER_URL);
@@ -38,7 +37,9 @@ app.use((req, res, next) => {
   next();
 });
 
-// Add tools
+/**
+ * upload-file-to-walrus tool
+ */
 server.tool(
   "upload-file-to-walrus",
   "Upload a file to Walrus storage",
@@ -51,12 +52,6 @@ server.tool(
     sendTo: z.string().optional().describe("Optional recipient address"),
   },
   async ({ fileContent, fileName, numEpochs, sendTo }) => {
-    console.log("Upload tool called with args:");
-    console.log("fileName:", fileName);
-    console.log("numEpochs:", numEpochs);
-    console.log("sendTo:", sendTo);
-    console.log("fileContent length:", fileContent?.length || 0);
-
     try {
       // Lambda環境では、Base64でエンコードされたファイル内容を受け取る
       if (!fileContent || !fileName) {
@@ -66,21 +61,21 @@ server.tool(
       // Base64をデコードして一時ファイルを作成
       const fs = await import("node:fs");
       const path = await import("node:path");
-      
+
       const tempDir = "/tmp"; // Lambda環境で書き込み可能なディレクトリ
       const tempFilePath = path.join(tempDir, fileName);
-      
+
       console.log("Creating temporary file:", tempFilePath);
-      
+
       // Base64デコード
       const fileBuffer = Buffer.from(fileContent, "base64");
       fs.writeFileSync(tempFilePath, fileBuffer);
-      
+
       console.log("Temporary file created, uploading to Walrus...");
-      
+
       // 既存のアップロード関数を使用
       const result = await uploadFile(tempFilePath, numEpochs, sendTo);
-      
+
       // 一時ファイルを削除
       try {
         fs.unlinkSync(tempFilePath);
@@ -88,7 +83,7 @@ server.tool(
       } catch (cleanupError) {
         console.warn("Failed to cleanup temporary file:", cleanupError);
       }
-      
+
       return {
         content: [
           {
@@ -116,9 +111,12 @@ server.tool(
         ],
       };
     }
-  },
+  }
 );
 
+/**
+ * file-download-from-walrus-via-x402 tool
+ */
 server.tool(
   "download-file-from-walrus-and-pay-USDC-via-x402",
   "Download a file from Walrus decentralized storage network with automatic USDC payment processing through x402 payment gateway. This tool retrieves files stored on Walrus using their unique Blob ID, handles the payment verification, and saves the file to your specified location. The payment ensures access to premium download speeds and guaranteed availability. When running in Lambda environment, the file content is returned as Base64 encoded data for local saving.",
@@ -130,13 +128,6 @@ server.tool(
       .describe("Optional output path for the downloaded file"),
   },
   async ({ blobId, outputPath }) => {
-    console.log("Download tool called with args:");
-    console.log("blobId:", blobId);
-    console.log("outputPath:", outputPath);
-
-    console.log("Downloading file with blobId:", blobId);
-    console.log("Output path:", outputPath);
-
     try {
       const result = await downloadFile(blobId, outputPath);
 
@@ -215,70 +206,6 @@ server.tool(
               blobId: blobId,
               downloadUrl: `https://aggregator.walrus-testnet.walrus.space/v1/blobs/${blobId}`,
             }),
-          },
-        ],
-      };
-    }
-  }
-);
-
-server.tool(
-  "get-data-from-resource-server",
-  "Get data from the resource server (in this example, the weather)",
-  {},
-  async () => {
-    try {
-      console.log("リソースサーバーに接続を試行中:", RESOURCE_SERVER_URL);
-
-      // まず基本的な接続テストを行う
-      const healthUrl = `${RESOURCE_SERVER_URL}/health`;
-      console.log("ヘルスチェックURL:", healthUrl);
-
-      const response = await fetch(healthUrl, {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          "User-Agent": "AWS-Lambda-MCP-Client/1.0",
-        },
-      });
-
-      console.log("レスポンス ステータス:", response.status);
-      console.log("レスポンス ヘッダー:", Object.fromEntries(response.headers));
-
-      if (!response.ok) {
-        throw new Error(
-          `HTTP error! status: ${response.status} ${response.statusText}`
-        );
-      }
-
-      const contentType = response.headers.get("content-type");
-      console.log("Content-Type:", contentType);
-
-      let data: string;
-      if (contentType?.includes("application/json")) {
-        const jsonData = await response.json();
-        data = JSON.stringify(jsonData, null, 2);
-      } else {
-        data = await response.text();
-      }
-
-      return {
-        content: [
-          {
-            type: "text",
-            text: `リソースサーバーからの応答:\nURL: ${healthUrl}\nステータス: ${response.status}\nContent-Type: ${contentType}\nデータ: ${data}`,
-          },
-        ],
-      };
-    } catch (error) {
-      console.error("リソースサーバーへの接続エラー:", error);
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      return {
-        content: [
-          {
-            type: "text",
-            text: `リソースサーバーへの接続エラー: ${errorMessage}\nURL: ${RESOURCE_SERVER_URL}\nエラーの詳細: ${error}`,
           },
         ],
       };

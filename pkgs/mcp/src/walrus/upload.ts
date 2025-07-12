@@ -28,23 +28,23 @@ export async function uploadFileFromBase64(
   base64Content: string,
   fileName: string,
   numEpochs: number,
-  sendTo?: string,
+  sendTo?: string
 ): Promise<any> {
   console.log(`Uploading file from base64: ${fileName}`);
-  
+
   // Create temporary file in /tmp directory (Lambda writeable directory)
   const tempDir = "/tmp";
   const filePath = path.join(tempDir, fileName);
-  
+
   try {
     // Decode base64 content and write to temporary file
     const fileBuffer = Buffer.from(base64Content, "base64");
     fs.writeFileSync(filePath, fileBuffer);
     console.log(`Created temporary file: ${filePath}`);
-    
+
     // Use existing upload logic
     const result = await uploadFile(filePath, numEpochs, sendTo);
-    
+
     // Clean up temporary file
     try {
       fs.unlinkSync(filePath);
@@ -52,7 +52,7 @@ export async function uploadFileFromBase64(
     } catch (cleanupError) {
       console.warn(`Failed to clean up temporary file: ${cleanupError}`);
     }
-    
+
     return result;
   } catch (error) {
     // Clean up temporary file in case of error
@@ -61,7 +61,9 @@ export async function uploadFileFromBase64(
         fs.unlinkSync(filePath);
       }
     } catch (cleanupError) {
-      console.warn(`Failed to clean up temporary file after error: ${cleanupError}`);
+      console.warn(
+        `Failed to clean up temporary file after error: ${cleanupError}`
+      );
     }
     throw new Error(`Failed to upload file from base64: ${error}`);
   }
@@ -78,7 +80,7 @@ export async function uploadFileFromBase64(
 export async function uploadFile(
   filePath: string,
   numEpochs: number,
-  sendTo?: string,
+  sendTo?: string
 ): Promise<any> {
   console.log(`Uploading file: ${filePath}`);
   // Check if the file exists

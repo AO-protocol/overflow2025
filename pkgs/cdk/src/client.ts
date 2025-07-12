@@ -1,5 +1,5 @@
 /**
- * デプロイしたMCPサーバーの機能をテストするためのクライアントスクリプト
+ * デプロイしたMCPサーバーの機能をテストするための検証用スクリプト
  */
 
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
@@ -10,33 +10,23 @@ dotenv.config();
 
 // デプロイしたLambda Function URLを使用
 const serverUrl = process.env.MCP_SERVER_URL;
-
 console.log("使用するサーバーURL:", serverUrl);
 
+// StreamableHTTPClientTransportインスタンスを初期化
 const transport = new StreamableHTTPClientTransport(
   new URL(`${serverUrl}/mcp`)
 );
 
+// MCPクライアントインスタンスを初期化
 const client = new Client({
   name: "x402-walrus-test-client",
   version: "1.0.0",
 });
 
-async function testResourceServer(): Promise<void> {
-  console.log("\n=== リソースサーバーからのデータ取得テスト ===");
-  try {
-    console.log("ツール呼び出し: get-data-from-resource-server");
-    const toolResult = await client.callTool({
-      name: "get-data-from-resource-server",
-      arguments: {},
-    });
-    console.log("✅ リソースサーバーからのデータ:");
-    console.log("レスポンス詳細:", JSON.stringify(toolResult, null, 2));
-  } catch (error) {
-    console.error("❌ リソースサーバーテストエラー:", error);
-  }
-}
-
+/**
+ * ファイルをアップロードするツールのテストコード
+ * @returns
+ */
 async function testWalrusUpload(): Promise<string | null> {
   console.log("\n=== Walrusファイルアップロードテスト ===");
 
@@ -47,13 +37,13 @@ async function testWalrusUpload(): Promise<string | null> {
   console.log("📄 ファイル存在チェック中...");
   let fileContent: string;
   let fileName: string;
-  
+
   try {
     const fs = await import("node:fs/promises");
     await fs.access(originalFilePath);
     targetFilePath = originalFilePath;
     console.log("✅ サンプルファイルが存在します:", originalFilePath);
-    
+
     // ファイルをBase64エンコード
     const fileBuffer = await fs.readFile(originalFilePath);
     fileContent = fileBuffer.toString("base64");
@@ -63,9 +53,10 @@ async function testWalrusUpload(): Promise<string | null> {
       "⚠️  サンプルファイルが見つかりません。テストファイルを作成します:",
       targetFilePath
     );
-    
+
     // テストファイルを作成してBase64エンコード
-    const testContent = "This is a test file for Walrus upload test.\nCreated for Lambda environment testing.";
+    const testContent =
+      "This is a test file for Walrus upload test.\nCreated for Lambda environment testing.";
     fileContent = Buffer.from(testContent, "utf8").toString("base64");
     fileName = "test.txt";
   }
@@ -101,11 +92,18 @@ async function testWalrusUpload(): Promise<string | null> {
   for (const config of testConfigs) {
     try {
       console.log(`\n🔄 ${config.name}でアップロードテスト中...`);
-      console.log("引数:", JSON.stringify({
-        fileContent: `[Base64 content - ${fileContent.length} chars]`,
-        fileName: config.arguments.fileName,
-        numEpochs: config.arguments.numEpochs
-      }, null, 2));
+      console.log(
+        "引数:",
+        JSON.stringify(
+          {
+            fileContent: `[Base64 content - ${fileContent.length} chars]`,
+            fileName: config.arguments.fileName,
+            numEpochs: config.arguments.numEpochs,
+          },
+          null,
+          2
+        )
+      );
 
       const toolResult = await client.callTool({
         name: "upload-file-to-walrus",
@@ -170,6 +168,11 @@ async function testWalrusUpload(): Promise<string | null> {
   return null;
 }
 
+/**
+ * ファイルをダウンロードするためのツールのテストコード
+ * @param blobId
+ * @returns
+ */
 async function testWalrusDownload(blobId: string): Promise<void> {
   console.log("\n=== Walrusファイルダウンロード & x402支払いテスト ===");
 
@@ -260,17 +263,9 @@ async function testWalrusDownload(blobId: string): Promise<void> {
   console.log("❌ すべてのダウンロード形式でテストに失敗しました");
 }
 
-async function testLocalMCPServer(): Promise<void> {
-  console.log("\n=== ローカルMCPサーバーテスト（参考） ===");
-  console.log("💡 ローカルのindex.jsを使用したテストを推奨します");
-  console.log(
-    "   コマンド例: node /Users/harukikondo/git/overflow2025/pkgs/mcp/dist/index.js"
-  );
-  console.log(
-    "   VS Code MCP設定での 'x402-walrus' サーバーが正しく動作するかをテストできます"
-  );
-}
-
+/**
+ * リモートMCPサーバーにアクセスしてそのレスポンスを分析する関数
+ */
 async function analyzeServerResponse(): Promise<void> {
   console.log("\n=== サーバーレスポンス分析 ===");
   try {
@@ -298,7 +293,7 @@ async function analyzeServerResponse(): Promise<void> {
         );
       } else {
         console.log(
-          `   ⚠️  詳細スキーマが取得できません - サーバー側の問題の可能性`
+          "⚠️  詳細スキーマが取得できません - サーバー側の問題の可能性"
         );
       }
     });
@@ -312,14 +307,18 @@ async function analyzeServerResponse(): Promise<void> {
   }
 }
 
+/**
+ * テスト用のファイルを作成するヘルパー関数
+ */
 async function createTestFile(): Promise<void> {
   console.log("\n=== テストファイル作成 ===");
   try {
     const fs = await import("node:fs/promises");
-    const testContent = `X402 & Walrus MCP Server Test File
-作成日時: ${new Date().toISOString()}
-テストデータ: Hello, Walrus Storage!
-`;
+    const testContent = `
+      X402 & Walrus MCP Server Test File
+      作成日時: ${new Date().toISOString()}
+      テストデータ: Hello, Walrus Storage!
+    `;
     await fs.writeFile("/tmp/test.txt", testContent, "utf8");
     console.log("✅ テストファイルを作成しました: /tmp/test.txt");
   } catch (error) {
@@ -327,6 +326,10 @@ async function createTestFile(): Promise<void> {
   }
 }
 
+/**
+ * メイン関数
+ * @returns
+ */
 async function main(): Promise<void> {
   console.log("🚀 X402 & Walrus MCP Server テストクライアント開始");
   console.log(`📡 接続先: ${serverUrl}/mcp`);
@@ -349,13 +352,6 @@ async function main(): Promise<void> {
 
     // サーバーレスポンス分析
     await analyzeServerResponse();
-
-    // ローカルMCPサーバーテストの案内
-    await testLocalMCPServer();
-
-    // リソースサーバーテスト
-    await testResourceServer();
-
     // テストファイル作成
     await createTestFile();
 
